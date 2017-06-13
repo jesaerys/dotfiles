@@ -1,0 +1,59 @@
+shopt -s extglob
+
+export CLICOLOR=1
+export LSCOLORS='exfxcxdxbxegedabagacad'
+
+alias grep='grep --color=auto'
+
+export PATH="\
+$HOME/bin:\
+/Users/z001j0s/anaconda/bin:\
+$PATH"
+
+
+function promptCommand {
+    # https://en.wikipedia.org/wiki/ANSI_escape_code
+    local reset='\[\e[0m\]'
+    local bold="\[\e[1m\] ${reset}"
+    local blue="\[\e[34m\] ${reset}"
+    local cyan="\[\e[36m\] ${reset}"
+    local green="\[\e[32m\] ${reset}"
+
+    local __prompt__=''
+
+    # PWD
+    local __path__="$PWD"
+    local m=1
+    local n=23
+    __path__="${__path__/#$HOME/~}"
+    if (( ${#__path__} > $m+$n+1 )); then
+        __path__="${__path__::$m}…${__path__: -$n}"
+    fi
+    __prompt__+="${bold/ /$__path__}"
+
+    # Extra information
+    local __extra__=''
+
+    # Prefix conda env
+    if [[ -n $CONDA_DEFAULT_ENV ]]; then
+        __extra__+=" ${cyan/ /$CONDA_DEFAULT_ENV}"
+    fi
+
+    # Git branch
+    local __branch__="$(git describe --contains --all HEAD 2>/dev/null)"
+    if [[ -n $__branch__ ]]; then
+        __extra__+=" ${green/ /$__branch__}"
+    fi
+
+    local L='❪'
+    local R='❫'
+    if [[ -n $__extra__ ]]; then
+        __prompt__+=" ${blue/ /$L}${__extra__# }${blue/ /$R}"
+    fi
+
+    # Prompt character
+    __prompt__+=" ${blue/ /❯} "
+
+    PS1="${__prompt__}"
+}
+export PROMPT_COMMAND='promptCommand'

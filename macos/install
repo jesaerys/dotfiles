@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+
+if [[ $PWD == ${PWD%/dotfiles/macos} ]]; then
+    echo "\
+It looks like you aren't executing this script from within the dotfiles/macos
+directory. Please navigate to dotfiles/macos and try ./install again."
+    exit 1
+fi
+
+DOTFILES="$PWD"
+
+function backup_if_exists {
+    if [[ -f $1 && ! -L $1 ]]; then
+        cp "$1" "${1}.bak"
+    fi
+}
+
+function safeln {
+    local source_file="$1"
+    local target_file="$2"
+
+    backup_if_exists "$target_file"
+    mkdir -p "$(dirname "$target_file")"
+    ln -sf "$source_file" "$target_file"
+}
+
+backup_if_exists "${HOME}/.bashrc" 
+rm "${HOME}/.bashrc"
+cat <<EOF > "${HOME}/.bashrc"
+export DOTFILES="$DOTFILES"
+source "\${DOTFILES}/bash/bashrc"
+EOF
+
+safeln "${DOTFILES}/bash/bash_profile" "${HOME}/.bash_profile"
+safeln "${DOTFILES}/bash/inputrc" "${HOME}/.inputrc"
+safeln "${DOTFILES}/vim/vimrc" "${HOME}/.vimrc"
+safeln "${DOTFILES}/conda/condarc" "${HOME}/.condarc"
+safeln "${DOTFILES}/ssh/config" "${HOME}/.ssh/config"
+chmod 700 "${HOME}/.ssh"

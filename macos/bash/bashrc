@@ -10,6 +10,7 @@ $HOME/bin:\
 /Users/z001j0s/anaconda/bin:\
 $PATH"
 
+alias brew='PATH="${PATH/$HOME\/anaconda\/bin:}" brew'
 
 function promptCommand {
     # https://en.wikipedia.org/wiki/ANSI_escape_code

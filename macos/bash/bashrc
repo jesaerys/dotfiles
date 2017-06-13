@@ -18,6 +18,7 @@ function promptCommand {
     local blue="\[\e[34m\] ${reset}"
     local cyan="\[\e[36m\] ${reset}"
     local green="\[\e[32m\] ${reset}"
+    local red="\[\e[31m\] ${reset}"
 
     local __prompt__=''
 
@@ -31,7 +32,7 @@ function promptCommand {
     fi
     __prompt__+="${bold/ /$__path__}"
 
-    # Extra information
+    # Prepare extra information
     local __extra__=''
 
     # Prefix conda env
@@ -45,6 +46,15 @@ function promptCommand {
         __extra__+=" ${green/ /$__branch__}"
     fi
 
+    # Jobs
+    declare -a lines
+    IFS=$'\n' read -a lines -d '' -r < <(jobs)
+    local n=${#lines[@]}
+    if [[ $n > 0 ]]; then
+        __extra__+=" ${red/ /$n}"
+    fi
+
+    # Append extra information
     local L='❪'
     local R='❫'
     if [[ -n $__extra__ ]]; then

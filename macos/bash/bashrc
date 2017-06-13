@@ -5,10 +5,9 @@ export LSCOLORS='exfxcxdxbxegedabagacad'
 
 alias grep='grep --color=auto'
 
-export PATH="\
-$HOME/bin:\
-/Users/z001j0s/anaconda/bin:\
-$PATH"
+PATH="$HOME/anaconda/bin:${PATH/$HOME\/anaconda\/bin:}"
+PATH="$HOME/bin:${PATH/$HOME\/bin:}"
+export PATH="$PATH"
 
 alias brew='PATH="${PATH/$HOME\/anaconda\/bin:}" brew'
 

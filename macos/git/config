@@ -1,0 +1,10 @@
+[alias]
+    hist = log --oneline --decorate --graph --all
+
+[push]
+    default = simple
+
+[color "decorate"]
+    HEAD = cyan
+    branch = cyan
+    remoteBranch = magenta

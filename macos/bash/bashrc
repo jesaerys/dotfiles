@@ -14,36 +14,36 @@ alias brew='PATH="${PATH/$HOME\/anaconda\/bin:}" brew'
 function promptCommand {
     # https://en.wikipedia.org/wiki/ANSI_escape_code
     local reset='\[\e[0m\]'
-    local bold="\[\e[1m\] ${reset}"
-    local blue="\[\e[34m\] ${reset}"
-    local cyan="\[\e[36m\] ${reset}"
-    local green="\[\e[32m\] ${reset}"
-    local red="\[\e[31m\] ${reset}"
+    local bold='\[\e[1m\]'
+    local blue='\[\e[34m\]'
+    local cyan='\[\e[36m\]'
+    local green='\[\e[32m\]'
+    local red='\[\e[31m\]'
 
-    local __prompt__=''
+    local prompt=''
 
     # PWD
-    local __path__="$PWD"
+    local path="$PWD"
     local m=1
     local n=23
-    __path__="${__path__/#$HOME/~}"
-    if (( ${#__path__} > $m+$n+1 )); then
-        __path__="${__path__::$m}…${__path__: -$n}"
+    path="${path/#$HOME/~}"
+    if (( ${#path} > $m+$n+1 )); then
+        path="${path::$m}…${path: -$n}"
     fi
-    __prompt__+="${bold/ /$__path__}"
+    prompt+="${bold}${path}${reset}"
 
     # Prepare extra information
-    local __extra__=''
+    local extra=''
 
     # Prefix conda env
     if [[ -n $CONDA_DEFAULT_ENV ]]; then
-        __extra__+=" ${cyan/ /$CONDA_DEFAULT_ENV}"
+        extra+=" ${cyan}${CONDA_DEFAULT_ENV}${reset}"
     fi
 
     # Git branch
-    local __branch__="$(git describe --contains --all HEAD 2>/dev/null)"
-    if [[ -n $__branch__ ]]; then
-        __extra__+=" ${green/ /$__branch__}"
+    local branch="$(git describe --contains --all HEAD 2>/dev/null)"
+    if [[ -n $branch ]]; then
+        extra+=" ${green}${branch}${reset}"
     fi
 
     # Jobs
@@ -51,19 +51,19 @@ function promptCommand {
     IFS=$'\n' read -a lines -d '' -r < <(jobs)
     local n=${#lines[@]}
     if [[ $n > 0 ]]; then
-        __extra__+=" ${red/ /$n}"
+        extra+=" ${red}${n}${reset}"
     fi
 
     # Append extra information
     local L='❪'
     local R='❫'
-    if [[ -n $__extra__ ]]; then
-        __prompt__+=" ${blue/ /$L}${__extra__# }${blue/ /$R}"
+    if [[ -n $extra ]]; then
+        prompt+=" ${blue}${L}${reset}${extra# }${blue}${R}${reset}"
     fi
 
     # Prompt character
-    __prompt__+=" ${blue/ /❯} "
+    prompt+=" ${blue}❯${reset} "
 
-    PS1="${__prompt__}"
+    PS1="${prompt}"
 }
 export PROMPT_COMMAND='promptCommand'

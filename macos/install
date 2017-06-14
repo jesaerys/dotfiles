@@ -11,6 +11,7 @@ directory. Please navigate to dotfiles/macos and try ./install again."
 fi
 
 DOTFILES="$PWD"
+DOTFILESROOT="${DOTFILES%/*}"
 
 function backup_if_exists {
     if [[ -f $1 && ! -L $1 ]]; then
@@ -28,8 +29,9 @@ function safeln {
 }
 
 backup_if_exists "${HOME}/.bashrc" 
-rm "${HOME}/.bashrc"
+[[ -f ${HOME}/.bashrc ]] && rm "${HOME}/.bashrc"
 cat <<EOF > "${HOME}/.bashrc"
+export DOTFILESROOT="$DOTFILESROOT"
 export DOTFILES="$DOTFILES"
 source "\${DOTFILES}/bash/bashrc"
 EOF

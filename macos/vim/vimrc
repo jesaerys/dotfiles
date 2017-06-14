@@ -3,13 +3,22 @@
 
 source $DOTFILES/vim/sensible.vim
 
-set background=light
 set expandtab
 set shiftwidth=4
 set hlsearch
 set incsearch
 set wrapscan
-set number
 set showcmd
 set showmode
 set completeopt=menu,menuone,preview,longest
+
+augroup ToggleNumbering
+    autocmd!
+    autocmd InsertEnter * :set norelativenumber
+    autocmd InsertLeave * :set relativenumber
+augroup END
+set number
+set relativenumber
+
+colorscheme default
+set background=light

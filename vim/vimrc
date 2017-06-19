@@ -1,8 +1,6 @@
 " A minimal vimrc based on sensible.vim.
 " Useful for linux servers and stock macOS.
 
-source $DOTFILES/vim/sensible.vim
-
 set expandtab
 set shiftwidth=4
 set hlsearch
@@ -20,5 +18,11 @@ augroup END
 set number
 set relativenumber
 
-colorscheme default
+colorscheme base16-default-light
 set background=light
+
+augroup FiletypePython
+    autocmd!
+    autocmd BufEnter *.py :set foldmethod=indent
+    autocmd BufEnter *.py :set foldignore-=#
+augroup END

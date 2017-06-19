@@ -1,47 +1,54 @@
 #!/usr/bin/env bash
 
-set -e
-set -u
+read -r -d '' help_message <<EOF
+Install macos dotfiles. Assumes the base installation from
+\`github.com/jesaerys/dotfiles\` is already in place.
 
-if [[ $PWD == ${PWD%/dotfiles/macos} ]]; then
-    echo "\
-It looks like you aren't executing this script from within the dotfiles/macos
-directory. Please navigate to dotfiles/macos and try ./install again."
-    exit 1
-fi
+usage: install [-fh]
 
-DOTFILES="$PWD"
-DOTFILESROOT="${DOTFILES%/*}"
-
-function backup_if_exists {
-    if [[ -f $1 && ! -L $1 ]]; then
-        cp "$1" "${1}.bak"
-    fi
-}
-
-function safeln {
-    local source_file="$1"
-    local target_file="$2"
-
-    backup_if_exists "$target_file"
-    mkdir -p "$(dirname "$target_file")"
-    ln -sf "$source_file" "$target_file"
-}
-
-backup_if_exists "${HOME}/.bashrc" 
-[[ -f ${HOME}/.bashrc ]] && rm "${HOME}/.bashrc"
-cat <<EOF > "${HOME}/.bashrc"
-export DOTFILESROOT="$DOTFILESROOT"
-export DOTFILES="$DOTFILES"
-source "\${DOTFILES}/bash/bashrc"
+options:
+ -f          force create links, overwriting all targets that already exist
+ -h, --help  show this help message and exit
 EOF
 
-safeln "${DOTFILES}/bash/bash_profile" "${HOME}/.bash_profile"
-safeln "${DOTFILES}/bash/inputrc" "${HOME}/.inputrc"
-safeln "${DOTFILES}/vim/vimrc" "${HOME}/.vimrc"
-safeln "${DOTFILES}/conda/condarc" "${HOME}/.condarc"
-safeln "${DOTFILES}/ssh/config" "${HOME}/.ssh/config"
-chmod 700 "${HOME}/.ssh"
-safeln "${DOTFILES}/git/config" "${HOME}/.config/git/config"
-safeln "${DOTFILES}/git/ignore" "${HOME}/.config/git/ignore"
-safeln "${DOTFILES}/hammerspoon/init.lua" "${HOME}/.hammerspoon/init.lua"
+[[ $PWD == ${PWD%/dotfiles/macos} ]] && echo "\
+It looks like you aren't in the \`dotfiles/macos\` directory.
+Please navigate to \`dotfiles/macos\` and try ./install again."\
+&& exit 1
+
+f=''
+
+while :; do
+    case $1 in
+        -h|--help) echo "$help_message"; exit 0;;
+        -f) f='f';;
+        *) break
+    esac
+    shift
+done
+
+mkdir -p "${HOME}/.config/dotfiles/bash/pre"
+mkdir -p "${HOME}/.config/dotfiles/bash/post"
+ln -shi"$f" "${PWD}/bash/pre" "${HOME}/.config/dotfiles/bash/pre/macos"
+ln -shi"$f" "${PWD}/bash/post" "${HOME}/.config/dotfiles/bash/post/macos"
+
+orig_umask="$(umask)"
+umask 0077
+mkdir -p "${HOME}/.ssh"
+umask "$orig_umask"
+
+ln -si"$f" "${PWD}/ssh/config" "${HOME}/.ssh/config"
+
+mkdir -p "${HOME}/.hammerspoon"
+ln -si"$f" "${PWD}/hammerspoon/init.lua" "${HOME}/.hammerspoon/init.lua"
+
+mkdir -p "${HOME}/.config/nvim"
+ln -si"$f" "${PWD}/nvim/init.vim" "${HOME}/.config/nvim/init.vim"
+mkdir -p "${HOME}/.config/nvim/colors"
+ln -si"$f" "$(cd ..; echo $PWD)/vim/base16-default-light.vim" "${HOME}/.config/nvim/colors/base16-default-light.vim"
+
+ln -shi"$f" "/usr/local/opt/ncurses/share/terminfo" "${HOME}/.terminfo"
+
+ln -si"$f" "${PWD}/conda/condarc" "${HOME}/.condarc"
+
+unset f

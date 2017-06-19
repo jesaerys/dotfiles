@@ -1,0 +1,7 @@
+PATH="$HOME/anaconda/bin:${PATH/$HOME\/anaconda\/bin:}"
+PATH="$HOME/bin:${PATH/$HOME\/bin:}"
+export PATH="$PATH"
+
+alias brew='PATH="${PATH/$HOME\/anaconda\/bin:}" brew'
+alias vim='nvim'  # can still use vi to access system vim
+alias nv='nvim'

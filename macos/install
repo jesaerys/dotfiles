@@ -51,4 +51,7 @@ ln -shi"$f" "/usr/local/opt/ncurses/share/terminfo" "${HOME}/.terminfo"
 
 ln -si"$f" "${PWD}/conda/condarc" "${HOME}/.condarc"
 
+mkdir -p "${HOME}/.ipython/profile_default"
+ln -si"$f" "${PWD}/ipython/ipython_config.py" "${HOME}/.ipython/profile_default/ipython_config.py"
+
 unset f

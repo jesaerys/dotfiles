@@ -86,6 +86,11 @@ function promptCommand {
 export PROMPT_COMMAND='promptCommand'
 
 
+if [[ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
+    source $HOME/.nix-profile/etc/profile.d/nix.sh
+fi
+
+
 # Recursively source all files in `~/.config/dotfiles/bash/post`
 if [[ -d "${HOME}/.config/dotfiles/bash/post" ]]; then
     for x in $(find -L "${HOME}/.config/dotfiles/bash/post" -type f); do

@@ -28,8 +28,8 @@ promptCommand() {
 
     export PS1="${NIX_ENV}${CONDA_ENV}${PYTHON_VIRTUAL_ENV}${BOLD}${CWD} ${PROMPT_COLOR}❯${RESET} "
 }
-#export PROMPT_COMMAND='promptCommand'
-export PS1='\[\e[1m\]\W \[\e[38;2;66;122;179m\]❯ \[\e[0m\]'
+export PROMPT_COMMAND='promptCommand'
+#export PS1='\[\e[1m\]\W \[\e[38;2;66;122;179m\]❯ \[\e[0m\]'
 
 
 export CLICOLOR=1

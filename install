@@ -1,0 +1,97 @@
+#!/usr/bin/python
+"""
+Why on earth did I write a python script to create just a handful of
+directories and symlinks? Surely this should only take about 10 lines of bash,
+right?
+
+The answer is that it actually isn't so straightforward. After dealing with
+edge cases like how to create a symlink when the target is an existing
+directory, and accounting for the minutiae of BSD `ln` versus GNU `ln` to
+guarantee cross-platformness, my bash script was absolutely out of control. I
+decided I might as well go for python.
+
+"""
+from __future__ import division, absolute_import, print_function, unicode_literals
+
+import argparse
+import os
+import shutil
+import stat
+
+import sys
+_DOTFILES_DIR = os.path.dirname((os.path.realpath(__file__)))
+sys.path.insert(0, os.path.join(_DOTFILES_DIR, 'lib/pathlib2-2.3.0'))
+sys.path.insert(0, os.path.join(_DOTFILES_DIR, 'lib/six-1.11.0'))
+sys.path.insert(0, os.path.join(_DOTFILES_DIR, 'lib/scandir-1.7'))
+import pathlib2
+
+
+class Path(pathlib2.PosixPath):
+
+    @classmethod
+    def expanded(cls, *pathsegments):
+        path = os.path.join(*map(str, pathsegments))
+        path_ = os.path.expanduser(os.path.expandvars(path))
+        return cls(path_)
+
+    def expandvars(self):
+        return self.__class__(os.path.expandvars(str(self)))
+
+    def rmtree(self):
+        shutil.rmtree(str(self))
+
+    def force_remove(self):
+        if self.is_dir() and not self.is_symlink():
+            self.rmtree()
+        else:
+            self.unlink()
+
+    def force_symlink_to(self, source):
+        if self.exists():
+            self.force_remove()
+        self.symlink_to(source)
+
+
+def symlink(source, target):
+    Path.expanded(target).force_symlink_to(Path.expanded(source))
+
+
+def mkdir(path, mode=755, exist_ok=True):
+    Path.expanded(path).mkdir(mode=_translate_mode(mode), exist_ok=exist_ok)
+
+
+def _translate_mode(mode):
+    def to_rwx(n):
+        return bin(int(n))[2:].zfill(3)
+    bits = ''.join(map(to_rwx, str(mode)))
+    return int(bits, base=2)
+
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Install dotfiles',
+    )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    DOTFILES_DIR = Path(_DOTFILES_DIR)
+
+    symlink(DOTFILES_DIR/'bash_profile', '$HOME/.bash_profile')
+    symlink(DOTFILES_DIR/'bashrc', '$HOME/.bashrc')
+
+    mkdir('$HOME/.config', mode=700)
+
+    symlink(DOTFILES_DIR/'git', '$HOME/.config/git')
+
+    symlink(DOTFILES_DIR/'nvim', '$HOME/.config/nvim')
+
+    mkdir('$HOME/.ssh', mode=700)
+    symlink(DOTFILES_DIR/'ssh/config', '$HOME/.ssh/config')
+
+
+if __name__ == '__main__':
+    main()

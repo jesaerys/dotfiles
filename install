@@ -38,3 +38,6 @@ symlink $PWD/nvim $HOME/.config/nvim
 
 mkdir -m 700 -p $HOME/.ssh
 symlink $PWD/ssh/config $HOME/.ssh/config
+
+mkdir -p $HOME/.ipython/profile_default
+symlink ipython_config.py $HOME/.ipython/profile_default/ipython_config.py

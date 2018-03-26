@@ -22,7 +22,7 @@ EOF
 
 
 function symlink {
-    [[ -e $2 ]] && rm -rf "$2"
+    [[ -L $2 || -e $2 ]] && rm -rf "$2"
     ln -s "$1" "$2"
 }
 

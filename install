@@ -41,3 +41,6 @@ symlink $PWD/ssh/config $HOME/.ssh/config
 
 mkdir -p $HOME/.ipython/profile_default
 symlink $PWD/ipython_config.py $HOME/.ipython/profile_default/ipython_config.py
+
+symlink $PWD/ghci $HOME/.ghci
+symlink $PWD/haskeline $HOME/.haskeline

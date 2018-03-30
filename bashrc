@@ -3,6 +3,7 @@
 if [[ ${PATH/\/usr\/local\/bin:} = $PATH ]]; then
     source /etc/profile
 fi
+export PATH="$HOME/bin:$PATH"
 
 
 set -o vi

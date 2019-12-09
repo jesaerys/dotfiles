@@ -1,6 +1,14 @@
-*.swp
 *.DS_Store
-*.pyc
-__pycache__
-*.egg-info
-.ipynb_checkpoints
+*.swp
+.vscode
+.devcontainer
+.stuff
+
+# Python
+#__pycache__
+#*.egg-info
+#.ipynb_checkpoints
+#.venv
+
+# Scala
+#target/

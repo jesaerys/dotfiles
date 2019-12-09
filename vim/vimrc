@@ -1,0 +1,57 @@
+set nocompatible
+filetype plugin indent on
+
+set hlsearch
+set incsearch
+
+set autoindent
+set copyindent
+set expandtab
+set shiftwidth=4
+set smarttab
+
+set textwidth=80
+set nojoinspaces
+set formatoptions=croqj
+
+set foldenable
+let g:sh_fold_enabled=7
+set foldmethod=syntax
+set foldignore=
+set foldopen-=block
+set foldopen+=jump
+set foldtext=getline(v:foldstart)
+
+set ruler
+set showcmd
+set clipboard=unnamed
+set wildmenu
+set wildmode=longest:full
+set path=+=**
+set fillchars=vert:│,fold:─
+set mouse=a
+
+set hidden
+set splitbelow
+set splitright
+let g:netrw_alto=1
+let g:netrw_altv=1
+
+syntax enable
+
+highlight VertSplit cterm=NONE 
+highlight StatusLine cterm=bold ctermbg=7
+highlight StatusLineNC cterm=NONE ctermbg=7
+highlight Folded ctermfg=8 ctermbg=NONE
+
+highlight Comment NONE
+highlight Constant NONE
+highlight Identifier NONE
+highlight Statement NONE
+highlight PreProc NONE
+highlight Type NONE
+highlight Special NONE
+highlight Underlined NONE
+highlight Ignore NONE
+highlight Error NONE
+highlight Todo NONE

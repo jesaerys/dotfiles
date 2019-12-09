@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+ln -sf "${HOME}/.dotfiles/vscode/settings.json" "${HOME}/Library/Application Support/Code/User/settings.json"
+ln -sf "${HOME}/.dotfiles/vscode/keybindings.json" "${HOME}/Library/Application Support/Code/User/keybindings.json"
+
+mkdir -p "${HOME}/.vscode/extensions"
+ln -sf "${HOME}/.dotfiles/vscode/extensions/leo" "${HOME}/.vscode/extensions/leo"

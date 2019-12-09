@@ -1,0 +1,33 @@
+{
+    "name": "blank",
+    "type": "light",
+    "colors": {
+        "titleBar.activeBackground": "#3a3a3a",
+        "titleBar.activeForeground": "#b3b3b3",
+        "titleBar.inactiveBackground": "#2d2d2d",
+        "titleBar.inactiveForeground": "#686868",
+        "titleBar.border": "#000000",
+
+        "activityBar.background": "#34373d",
+        "activityBar.foreground": "#dddddd",
+        "activityBar.inactiveForeground": "#888888",
+        "activityBar.border": "#000000",
+
+        "statusBar.background": "#3a3a3a",
+        "statusBar.foreground": "#b3b3b3",
+        "statusBar.border": "#000000",
+        "statusBar.debuggingBackground": "#3a3a3a",
+        "statusBar.debuggingForeground": "#b3b3b3",
+        "statusBar.debuggingBorder": "#000000",
+        "statusBar.noFolderBackground": "#3a3a3a",
+        "statusBar.noFolderForeground": "#b3b3b3",
+        "statusBar.noFolderBorder": "#000000"
+    },
+    "tokenColors": [
+        {
+            "name": "default",
+            "scope": [""],
+            "settings": {"foreground": "#333333"}
+        }
+    ]
+}

@@ -1,0 +1,37 @@
+shopt -s \
+    dotglob \
+    extglob \
+    nullglob
+
+PATH="${HOME}/.local/bin:${PATH}"
+
+export PS1='\[\e[1m\]\W ❯ \[\e[0m\]'
+export EDITOR=vi
+
+
+function sourceAll {
+    local FILE
+    for FILE in "$@"; do
+        source "${FILE}"
+    done
+}
+
+function sourceDir {
+    local FILE
+    for FILE in "${1}"/*; do
+        source "${FILE}"
+    done
+}
+
+
+sourceDir "${HOME}/.config/dotfiles/pre"
+
+sourceAll \
+    "${HOME}/.dotfiles/ls/init" \
+    "${HOME}/.dotfiles/grep/init" \
+    "${HOME}/.dotfiles/nix/strip_paths" \
+    "${HOME}/.dotfiles/nix/init" \
+    "${HOME}/.dotfiles/conda/init" \
+    "${HOME}/.dotfiles/vscode/init" \
+
+sourceDir "${HOME}/.config/dotfiles/post"

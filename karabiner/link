@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+mkdir -p "${HOME}/.config/karabiner"
+ln -sf "${HOME}/.dotfiles/karabiner/karabiner.json" "${HOME}/.config/karabiner/karabiner.json"
+ln -sf "${HOME}/.dotfiles/karabiner/assets" "${HOME}/.config/karabiner/assets"

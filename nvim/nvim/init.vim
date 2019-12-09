@@ -1,6 +1,6 @@
 " Neovim details ---------------------------------------------------------------
-let g:python_host_prog  = '/usr/local/bin/python2'
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python_host_prog  = '/Users/z001j0s/.local/share/nvim-python/py2/bin/python'
+let g:python3_host_prog = '/Users/z001j0s/.local/share/nvim-python/py3/bin/python'
 
 " For more responsive escape key
 set nottimeout

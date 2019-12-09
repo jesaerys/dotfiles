@@ -1,0 +1,5 @@
+# Source /etc/profile if /usr/local/bin isn't in PATH,
+# because terminals in emacs don't source /etc/profile
+if [ "${PATH#*/usr/local/bin:}" = "$PATH" ]; then
+    source /etc/profile
+fi

@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+ln -sf "${HOME}/.dotfiles/nvim/nvim" "${HOME}/.config/nvim"

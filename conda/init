@@ -1,0 +1,10 @@
+PATH="${HOME}/.miniconda3/bin:${PATH}"
+
+ENTRIES=''
+[[ -d "${HOME}/.miniconda3/envs" ]] && {
+    for PYTHON_DIR in "${HOME}/.miniconda3/envs"/python?.?.?; do
+        ENTRIES="${PYTHON_DIR}/bin:${ENTRIES}"
+    done
+}
+PATH="${ENTRIES%:}:${PATH}"
+unset ENTRIES

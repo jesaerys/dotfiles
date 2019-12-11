@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-# Nothing to link, just setting up for the init routine
-mkdir -p "${HOME}/.miniconda/envs"

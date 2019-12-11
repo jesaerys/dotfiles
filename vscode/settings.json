@@ -74,5 +74,5 @@
     // guarantee that vscode appends below this comment block.)
     "workbench.statusBar.visible": true,
     "window.zoomLevel": 0,
-    "workbench.colorTheme": "Leo Dark"
+    "workbench.colorTheme": "Leo Light"
 }

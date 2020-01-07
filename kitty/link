@@ -7,3 +7,7 @@ ln -sf "${HOME}/.dotfiles/kitty/themes/github.conf" "${HOME}/.config/kitty/theme
 
 mkdir -p "${HOME}/.local/bin"
 ln -sf "${HOME}/.dotfiles/kitty/kitty-theme" "${HOME}/.local/bin/kitty-theme"
+
+# Copy SF Mono to make it available to Kitty and other apps
+cp /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/SFMono-*.otf ~/Library/Fonts/
+

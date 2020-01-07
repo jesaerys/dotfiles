@@ -32,7 +32,6 @@ sourceAll \
     "${HOME}/.dotfiles/nix/strip_paths" \
     "${HOME}/.dotfiles/nix/init" \
     "${HOME}/.dotfiles/direnv/init" \
-    "${HOME}/.dotfiles/conda/init" \
     "${HOME}/.dotfiles/cargo/init" \
     "${HOME}/.dotfiles/vscode/init" \
 

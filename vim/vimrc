@@ -13,7 +13,7 @@ set smarttab
 
 set textwidth=80
 set nojoinspaces
-set formatoptions=croqj
+set formatoptions=croqlj
 
 set foldenable
 let g:sh_fold_enabled=7

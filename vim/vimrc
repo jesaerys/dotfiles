@@ -1,4 +1,5 @@
 set nocompatible
+set autoread
 filetype plugin indent on
 
 set hlsearch

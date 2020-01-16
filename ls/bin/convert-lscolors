@@ -1,0 +1,388 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+from argparse import ArgumentParser, Namespace
+from itertools import islice, starmap
+from functools import reduce
+import re
+import sys
+from typing import Any, Callable, Iterator, Optional, Sequence, Tuple, TypeVar
+import unittest
+
+
+A = TypeVar("A")
+
+
+class Colors:
+
+    bsd_types = ["di", "ln", "so", "pi", "ex", "bd", "cd", "su", "sg", "tw", "ow"]
+
+    def __init__(self, styles: Dict[str, Style]) -> None:
+        self.styles = styles
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            hasattr(other, "styles")
+            and other.styles == self.styles
+        )
+
+    @staticmethod
+    def is_bsd(colors: str) -> bool:
+        return re.search("^[a-h,A-H,x]{22}$", colors)
+
+    @staticmethod
+    def unstack2(xs: Sequence[A]) -> Iterator[Tuple[A, A]]:
+        return zip(xs[0::2], xs[1::2])
+
+    @classmethod
+    def from_bsd(cls, colors: str) -> Colors:
+        pairs = cls.unstack2(colors)
+        styles = {tp: Style.from_bsd(pair) for tp, pair in zip(cls.bsd_types, pairs)}
+        return Colors(styles)
+
+    @classmethod
+    def from_gnu(cls, colors: str) -> Colors:
+        entries = (x.split("=") for x in colors.split(":"))
+        styles = {tp: Style.from_gnu(entry) for tp, entry in entries}
+        return Colors(styles)
+
+    def to_gnu(self) -> str:
+        entries = {tp: style.to_gnu() for tp, style in self.styles.items()}
+        return ":".join(f"{tp}={entry}" for tp, entry in entries.items())
+
+    def to_bsd(self) -> str:
+        pairs = [self.styles[tp].to_bsd() for tp in self.bsd_types]
+        return "".join(pairs)
+
+
+class Style:
+
+    def __init__(self, foreground: Optional[int], background: Optional[int], bold: bool) -> None:
+        self.foreground = foreground
+        self.background = background
+        self.bold = bold
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            hasattr(other, "foreground")
+            and other.foreground == self.foreground
+            and hasattr(other, "background")
+            and other.background == self.background
+            and hasattr(other, "bold")
+            and other.bold == self.bold
+        )
+
+    @classmethod
+    def from_bsd(cls, pair: str) -> Style:
+        colors = list(map(BsdColor.from_str, pair))
+        return Style(colors[0].i, colors[1].i, any(c.bold for c in colors))
+
+    @classmethod
+    def from_gnu(cls, entry: str) -> Style:
+        attrs = entry.split(";")
+        style = Style(None, None, False)
+        return reduce(Style.reduce_gnu, attrs, style)
+
+    def reduce_gnu(self, x: str) -> Style:
+        if x == "0":
+            return Style(None, None, False)
+        elif x == "1":
+            return Style(self.foreground, self.background, True)
+        else:
+            color = GnuColor.from_str(x)
+            if color.background:
+                return Style(self.foreground, color.i, self.bold)
+            else:
+                return Style(color.i, self.background, self.bold)
+
+    def to_bsd(self) -> str:
+        fg_bold, bg_bold = (
+            (True, False) if self.bold and self.foreground is not None
+            else ((False, True) if self.bold and self.background is not None
+            else (False, False))
+        )
+        fg = BsdColor(self.foreground, fg_bold).to_str()
+        bg = BsdColor(self.background, bg_bold).to_str()
+        return f"{fg}{bg}"
+
+    def to_gnu(self) -> str:
+        bold = "1" if self.bold else ""
+        fg = GnuColor(self.foreground, False).to_str() if self.foreground is not None else ""
+        bg = GnuColor(self.background, True).to_str() if self.background is not None else ""
+        attrs = ";".join([x for x in [bold, fg, bg] if x])
+        return attrs if attrs else "0"
+
+
+class BsdColor:
+
+    def __init__(self, i: Optional[int], bold: bool) -> None:
+        self.i = i
+        if self.i is None:
+            self.bold = False
+        else:
+            self.bold = bold
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            hasattr(other, "i")
+            and other.i == self.i
+            and hasattr(other, "bold")
+            and other.bold == self.bold
+        )
+
+    @classmethod
+    def from_str(cls, x: str) -> BsdColor:
+        lower_x = x.lower()
+        if lower_x == "x":
+            return BsdColor(None, False)
+        else:
+            return BsdColor(ord(lower_x) - ord("a"), x.isupper())
+
+    def to_str(self) -> str:
+        if self.i is None:
+            return "x"
+        else:
+            x = chr(ord("a") + self.i)
+            if self.bold:
+                return x.upper()
+            else:
+                return x
+
+
+class GnuColor:
+
+    def __init__(self, i: int, background: bool) -> None:
+        self.i = i
+        self.background = background
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            hasattr(other, "i")
+            and other.i == self.i
+            and hasattr(other, "background")
+            and other.background == self.background
+        )
+
+    @classmethod
+    def from_str(cls, x: str) -> GnuColor:
+        n, i = divmod(int(x), 10)
+        if n == 3:
+            return GnuColor(i, False)
+        elif n == 4:
+            return GnuColor(i, True)
+        else:
+            raise ValueError(f"invalid color '{x}'")
+
+    def to_str(self) -> str:
+        offset = 40 if self.background else 30
+        return str(self.i + offset)
+
+
+def parse_args() -> Namespace:
+    parser = ArgumentParser(
+        description="""
+            Convert an LSCOLORS string for BSD ls to an LS_COLORS string for
+            GNU ls and vice versa. The flavor (BSD or GNU) of the input
+            string is detected automatically, and the converted string is
+            printed on stdout.
+        """
+    )
+    parser.add_argument(
+        "colors",
+        help="color string to convert"
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    f, g = (
+        (Colors.from_bsd, Colors.to_gnu) if Colors.is_bsd(args.colors)
+        else (Colors.from_gnu, Colors.to_bsd)
+    )
+    converted = g(f(args.colors))
+    print(converted)
+
+
+class TestBsdColor(unittest.TestCase):
+
+    cases = [
+        ("x", "x", None, False),
+        ("X", "x", None, False),
+        ("a", "a", 0, False),
+        ("b", "b", 1, False),
+        ("c", "c", 2, False),
+        ("d", "d", 3, False),
+        ("e", "e", 4, False),
+        ("f", "f", 5, False),
+        ("g", "g", 6, False),
+        ("h", "h", 7, False),
+        ("A", "A", 0, True),
+        ("B", "B", 1, True),
+        ("C", "C", 2, True),
+        ("D", "D", 3, True),
+        ("E", "E", 4, True),
+        ("F", "F", 5, True),
+        ("G", "G", 6, True),
+        ("H", "H", 7, True),
+    ]
+
+    def test_eq(self):
+        for _, _, i, bold in self.cases:
+            with self.subTest(i=i, bold=bold):
+                color1 = BsdColor(i, bold)
+                color2 = BsdColor(i, bold)
+                self.assertEqual(color1, color2)
+
+    def test_from_str(self):
+        for x, _, i, bold in self.cases:
+            with self.subTest(x=x, i=i, bold=bold):
+                color = BsdColor.from_str(x)
+                self.assertEqual(color.i, i)
+                self.assertEqual(color.bold, bold)
+
+    def test_to_str(self):
+        for _, x, i, bold in self.cases:
+            with self.subTest(x=x, i=i, bold=bold):
+                color = BsdColor(i, bold)
+                self.assertEqual(color.to_str(), x)
+
+
+class TestGnuColor(unittest.TestCase):
+
+    cases = [
+        ("30", 0, False),
+        ("31", 1, False),
+        ("32", 2, False),
+        ("33", 3, False),
+        ("34", 4, False),
+        ("35", 5, False),
+        ("36", 6, False),
+        ("37", 7, False),
+        ("40", 0, True),
+        ("41", 1, True),
+        ("42", 2, True),
+        ("43", 3, True),
+        ("44", 4, True),
+        ("45", 5, True),
+        ("46", 6, True),
+        ("47", 7, True),
+    ]
+
+    def test_eq(self):
+        for _, i, background in self.cases:
+            with self.subTest(i=i, background=background):
+                color1 = GnuColor(i, background)
+                color2 = GnuColor(i, background)
+                self.assertEqual(color1, color2)
+
+    def test_from_str(self):
+        for x, i, background in self.cases:
+            with self.subTest(x=x, i=i, background=background):
+                color = GnuColor.from_str(x)
+                self.assertEqual(color.i, i)
+                self.assertEqual(color.background, background)
+
+    def test_to_str(self):
+        for x, i, background in self.cases:
+            with self.subTest(x=x, i=i, background=background):
+                color = GnuColor(i, background)
+                self.assertEqual(color.to_str(), x)
+
+
+class TestStyle(unittest.TestCase):
+
+    cases = [
+        ("xx", "xx", "0",        None, None, False),
+        ("ax", "ax", "30",          0, None, False),
+        ("xa", "xa", "40",       None,    0, False),
+        ("aa", "aa", "30;40",       0,    0, False),
+        ("Ax", "Ax", "1;30",        0, None,  True),
+        ("xA", "xA", "1;40",     None,    0,  True),
+        ("Aa", "Aa", "1;30;40",     0,    0,  True),
+        ("aA", "Aa", "1;30;40",     0,    0,  True),
+        ("AA", "Aa", "1;30;40",     0,    0,  True),
+    ]
+
+    def test_eq(self):
+        for _, _, _, foreground, background, bold in self.cases:
+            with self.subTest(foreground=foreground, background=background, bold=bold):
+                style1 = Style(foreground, background, bold)
+                style2 = Style(foreground, background, bold)
+                self.assertEqual(style1, style2)
+
+    def test_from_bsd(self):
+        for pair, _, _, foreground, background, bold in self.cases:
+            with self.subTest(pair=pair, foreground=foreground, background=background, bold=bold):
+                style = Style.from_bsd(pair)
+                self.assertEqual(style.foreground, foreground)
+                self.assertEqual(style.background, background)
+                self.assertEqual(style.bold, bold)
+
+    def test_from_gnu(self):
+        for _, _, entry, foreground, background, bold in self.cases:
+            with self.subTest(entry=entry, foreground=foreground, background=background, bold=bold):
+                style = Style.from_gnu(entry)
+                self.assertEqual(style.foreground, foreground)
+                self.assertEqual(style.background, background)
+                self.assertEqual(style.bold, bold)
+
+    def test_to_bsd(self):
+        for _, pair, _, foreground, background, bold in self.cases:
+            with self.subTest(pair=pair, foreground=foreground, background=background, bold=bold):
+                style = Style(foreground, background, bold)
+                self.assertEqual(style.to_bsd(), pair)
+
+    def test_to_gnu(self):
+        for _, _, entry, foreground, background, bold in self.cases:
+            with self.subTest(entry=entry, foreground=foreground, background=background, bold=bold):
+                style = Style(foreground, background, bold)
+                self.assertEqual(style.to_gnu(), entry)
+
+
+class TestColors(unittest.TestCase):
+
+    styles = {
+        "di": Style(4, None, False),
+        "ln": Style(5, None, False),
+        "so": Style(2, None, False),
+        "pi": Style(3, None, False),
+        "ex": Style(1, None, False),
+        "bd": Style(4, 6, False), 
+        "cd": Style(4, 3, False), 
+        "su": Style(0, 1, False), 
+        "sg": Style(0, 6, False), 
+        "tw": Style(0, 2, False), 
+        "ow": Style(0, 3, False), 
+    }
+    bsd_colors = "exfxcxdxbxegedabagacad"
+    gnu_colors = "di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+
+    def test_is_bsd(self):
+        self.assertTrue(Colors.is_bsd(self.bsd_colors))
+        self.assertFalse(Colors.is_bsd(self.gnu_colors))
+
+    def test_from_bsd(self):
+        colors = Colors.from_bsd(self.bsd_colors)
+        self.assertEqual(colors, Colors(self.styles))
+
+    def test_from_gnu(self):
+        colors = Colors.from_gnu(self.gnu_colors)
+        self.assertEqual(colors, Colors(self.styles))
+
+    def test_to_gnu(self):
+        colors = Colors(self.styles)
+        self.assertEqual(colors.to_gnu(), self.gnu_colors)
+
+    def test_to_bsd(self):
+        colors = Colors(self.styles)
+        self.assertEqual(colors.to_bsd(), self.bsd_colors)
+
+
+if __name__ == "__main__":
+    if sys.argv[-1] == "test":
+        sys.argv.pop()
+        unittest.main()
+    else:
+        main()

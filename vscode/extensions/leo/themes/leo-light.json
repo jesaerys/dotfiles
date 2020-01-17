@@ -21,7 +21,24 @@
         "statusBar.debuggingBorder": "#000000",
         "statusBar.noFolderBackground": "#3a3a3a",
         "statusBar.noFolderForeground": "#b3b3b3",
-        "statusBar.noFolderBorder": "#000000"
+        "statusBar.noFolderBorder": "#000000",
+
+        "terminal.ansiBlack": "#333333",
+        "terminal.ansiRed": "#b22222",
+        "terminal.ansiGreen": "#1d781d",
+        "terminal.ansiYellow": "#8d6708",
+        "terminal.ansiBlue": "#1f3a93",
+        "terminal.ansiMagenta": "#913d88",
+        "terminal.ansiCyan": "#007faa",
+        "terminal.ansiWhite": "#ffffff",
+        "terminal.ansiBrightBlack": "#333333",
+        "terminal.ansiBrightRed": "#b22222",
+        "terminal.ansiBrightGreen": "#1d781d",
+        "terminal.ansiBrightYellow": "#8d6708",
+        "terminal.ansiBrightBlue": "#1f3a93",
+        "terminal.ansiBrightMagenta": "#913d88",
+        "terminal.ansiBrightCyan": "#007faa",
+        "terminal.ansiBrightWhite": "#ffffff"
     },
     "tokenColors": [
         {

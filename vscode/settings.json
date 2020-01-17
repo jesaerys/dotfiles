@@ -8,9 +8,9 @@
     "editor.tokenColorCustomizations": {
     },
 
+    "workbench.editor.enablePreviewFromQuickOpen": false,
     "workbench.panel.defaultLocation": "right",
     "workbench.startupEditor": "newUntitledFile",
-    "workbench.statusBar.feedback.visible": false,
 
     "window.newWindowDimensions": "maximized",
     "window.titleBarStyle": "custom",
@@ -64,7 +64,6 @@
     //   indentation. A workaround is to end an indented block with an unindented
     //   None.
     // - Terminal:
-    //   - Switch from terminal to other pane in vim mode with ctrl-w
     //   - "Copy" mode to navigate around the (readonly) buffer to select and copy
     //     text
 

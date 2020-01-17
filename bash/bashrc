@@ -1,20 +1,12 @@
 shopt -s \
     dotglob \
-    extglob \
-    nullglob
+    extglob
 
 PATH="${HOME}/.local/bin:${PATH}"
 
 export PS1='\[\e[1m\]\W ❯ \[\e[0m\]'
 export EDITOR=vi
 
-
-function sourceAll {
-    local FILE
-    for FILE in "$@"; do
-        source "${FILE}"
-    done
-}
 
 function sourceDir {
     local FILE
@@ -26,11 +18,10 @@ function sourceDir {
 
 sourceDir "${HOME}/.config/dotfiles/pre"
 
-sourceAll \
-    "${HOME}/.dotfiles/ls/init" \
-    "${HOME}/.dotfiles/grep/init" \
-    "${HOME}/.dotfiles/direnv/init" \
-    "${HOME}/.dotfiles/cargo/init" \
-    "${HOME}/.dotfiles/vscode/init" \
+source "${HOME}/.dotfiles/ls/init"
+source "${HOME}/.dotfiles/grep/init"
+source "${HOME}/.dotfiles/direnv/init"
+source "${HOME}/.dotfiles/cargo/init"
+source "${HOME}/.dotfiles/vscode/init"
 
 sourceDir "${HOME}/.config/dotfiles/post"

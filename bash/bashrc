@@ -1,3 +1,5 @@
+[[ -f "${HOME}/.config/dotfiles/pre" ]] && source "${HOME}/.config/dotfiles/pre"
+
 shopt -s \
     dotglob \
     extglob
@@ -8,20 +10,10 @@ export PS1='\[\e[1m\]\W ❯ \[\e[0m\]'
 export EDITOR=vi
 
 
-function sourceDir {
-    local FILE
-    for FILE in "${1}"/*; do
-        source "${FILE}"
-    done
-}
-
-
-sourceDir "${HOME}/.config/dotfiles/pre"
-
 source "${HOME}/.dotfiles/ls/init"
 source "${HOME}/.dotfiles/grep/init"
 source "${HOME}/.dotfiles/direnv/init"
 source "${HOME}/.dotfiles/cargo/init"
 source "${HOME}/.dotfiles/vscode/init"
 
-sourceDir "${HOME}/.config/dotfiles/post"
+[[ -f "${HOME}/.config/dotfiles/post" ]] && source "${HOME}/.config/dotfiles/post"

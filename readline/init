@@ -1,0 +1,4 @@
+# Prevent ctrl-s from being intercepted by the terminal so that it can be used
+# for forward history search.
+# https://askubuntu.com/questions/60071/how-to-forward-search-history-with-the-reverse-i-search-command-ctrlr#60103
+stty stop undef

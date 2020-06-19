@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 mkdir -p "${HOME}/.config/karabiner"
+# Note that the sylink will be overwritten by a fresh karabiner.json if any
+# settings are changed in the UI.
 ln -sf "${HOME}/.dotfiles/karabiner/karabiner.json" "${HOME}/.config/karabiner/karabiner.json"
 ln -sf "${HOME}/.dotfiles/karabiner/assets" "${HOME}/.config/karabiner/assets"

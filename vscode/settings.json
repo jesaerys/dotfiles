@@ -52,9 +52,7 @@
     "spellright.language": [
         "en"
     ],
-    "spellright.documentTypes": [
-        "markdown"
-    ],
+    "spellright.documentTypes": [],
     "spellright.configurationScope": "user",
     "spellright.notificationClass": "information",
 
@@ -73,5 +71,6 @@
     // will add a new line below. (The first line below is just a dummy line to
     // guarantee that vscode appends below this comment block.)
     "workbench.statusBar.visible": true,
-    "workbench.colorTheme": "Leo Light"
+    "workbench.colorTheme": "Leo Light",
+    "window.zoomLevel": 0
 }

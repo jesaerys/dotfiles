@@ -1,1 +1,1 @@
-set formatoptions=tcroqlj
+set formatoptions=roqj

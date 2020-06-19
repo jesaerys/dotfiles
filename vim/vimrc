@@ -13,7 +13,7 @@ set smarttab
 
 set textwidth=80
 set nojoinspaces
-set formatoptions=croqlj
+set formatoptions=roqj
 
 set foldenable
 let g:sh_fold_enabled=7
@@ -42,8 +42,9 @@ let g:netrw_banner=0
 syntax enable
 
 highlight VertSplit cterm=NONE 
-highlight StatusLine cterm=bold ctermbg=7
-highlight StatusLineNC cterm=NONE ctermbg=7
+highlight StatusLine cterm=bold,reverse
+highlight StatusLineNC cterm=reverse
+highlight Visual cterm=reverse ctermbg=NONE
 highlight Folded ctermfg=8 ctermbg=NONE
 
 highlight Comment NONE

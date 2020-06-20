@@ -22,6 +22,9 @@ set foldignore=
 set foldopen-=block
 set foldopen+=jump
 set foldtext=getline(v:foldstart)
+autocmd BufReadPost * normal zR
+" Files start with all folds closed by default (foldlevel=0). Running zR for
+" each file sets foldlevel to the max.
 
 set ruler
 set showcmd
@@ -45,7 +48,7 @@ highlight VertSplit cterm=NONE
 highlight StatusLine cterm=bold,reverse
 highlight StatusLineNC cterm=reverse
 highlight Visual cterm=reverse ctermbg=NONE
-highlight Folded ctermfg=8 ctermbg=NONE
+highlight Folded ctermfg=NONE ctermbg=NONE
 
 highlight Comment NONE
 highlight Constant NONE

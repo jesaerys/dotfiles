@@ -1,0 +1,123 @@
+{
+  "title": "Spacebar+homerow modifiers -- broken due to hardware limitations :( E.g., space+a+h (shift+h) doesn't register",
+  "rules": [
+    {
+      "description": "Spacebar+{a,s,d,k,l,semicolon} to {left_{shift,option,control},right_{control,option,shift}}",
+      "manipulators": [
+        {
+          "description": "Complex chords like this one must come before simpler chords that would otherwise shadow it.",
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "a"}, {"key_code": "s"}, {"key_code": "d"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "left_shift", "modifiers": ["left_control", "left_option"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "a"}, {"key_code": "s"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "left_shift", "modifiers": ["left_option"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "a"}, {"key_code": "d"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "left_shift", "modifiers": ["left_control"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "s"}, {"key_code": "d"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "left_control", "modifiers": ["left_option"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "a"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "left_shift"}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "s"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "left_option"}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "d"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "left_control"}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "k"}, {"key_code": "l"}, {"key_code": "semicolon"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "right_shift", "modifiers": ["right_control", "right_option"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "k"}, {"key_code": "l"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "right_control", "modifiers": ["right_option"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "k"}, {"key_code": "semicolon"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "right_shift", "modifiers": ["right_control"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "l"}, {"key_code": "semicolon"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "right_shift", "modifiers": ["right_option"]}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "k"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "right_control"}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "l"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "right_option"}]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [{"key_code": "spacebar"}, {"key_code": "semicolon"}],
+            "modifiers": {"optional": ["any"]}
+          },
+          "to": [{"key_code": "right_shift"}]
+        }
+      ]
+    }
+  ]
+}

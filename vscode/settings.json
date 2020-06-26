@@ -1,76 +1,49 @@
 {
+    "editor.foldingHighlight": false,
     "editor.lineHeight": 20,
-    "editor.cursorBlinking": "solid",
     "editor.lineNumbers": "off",
+    "editor.overviewRulerBorder": false,
     "editor.renderIndentGuides": false,
     "editor.renderLineHighlight": "none",
+    "editor.cursorBlinking": "solid",
+    "editor.find.autoFindInSelection": "multiline",
     "editor.minimap.enabled": false,
-    "editor.tokenColorCustomizations": {
-    },
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.snippetSuggestions": "none",
 
-    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "workbench.enableExperiments": false,
     "workbench.panel.defaultLocation": "right",
-    "workbench.startupEditor": "newUntitledFile",
+    "workbench.startupEditor": "none",
+    "workbench.colorTheme": "Leo Light",
+    "workbench.iconTheme": null,
 
     "window.newWindowDimensions": "maximized",
-    "window.titleBarStyle": "custom",
-    "workbench.colorCustomizations": {
-        "editor.foldBackground": "#ff000000"
-    },
+
+    "extensions.autoUpdate": false,
+    "extensions.showRecommendationsOnlyOnDemand": true,
 
     "terminal.integrated.lineHeight": 1.4,
-
-    "extensions.showRecommendationsOnlyOnDemand": true,
-    "extensions.autoUpdate": false,
-
-    "vim.useSystemClipboard": true,
-    "vim.foldfix": true,
-    "vim.hlsearch": true,
-
-    "path-autocomplete.triggerOutsideStrings": true,
 
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
 
-    // Global Python defaults -- tone down the IDE magic
+    "cSpell.enabled": false,
+    "cSpell.enableFiletypes": [
+        "nix"
+    ],
+
+    "markdown.preview.doubleClickToSwitchToEditor": false,
+
+    "path-autocomplete.triggerOutsideStrings": true,
+
     "python.autoComplete.showAdvancedMembers": false,
     "python.linting.enabled": false,
-    "python.workspaceSymbols.enabled": false,
-    "python.envFile": "",
-    "python.venvFolders": [],
-    "python.venvPath": "",
-    "python.terminal.activateEnvironment": false,
-
-    "[python]": {
-        "editor.tabSize": 4
-    },
-
-    "[scala]": {
-        "editor.tabSize": 2
-    },
-
-    "spellright.language": [
-        "en"
+    "python.linting.lintOnSave": false,
+    "python.linting.mypyArgs": [
+        "--show-column-numbers"
     ],
-    "spellright.documentTypes": [],
-    "spellright.configurationScope": "user",
-    "spellright.notificationClass": "information",
 
-    // TODO:
-    // - How to set up toggles for settings like line numbers? Is there any way
-    //   to avoid modifying this file when the setting is toggled?
-    // - Python: run selection in terminal doesn't submit a final newline after
-    //   indentation. A workaround is to end an indented block with an unindented
-    //   None.
-    // - Terminal:
-    //   - "Copy" mode to navigate around the (readonly) buffer to select and copy
-    //     text
-
-    // vscode automatically updates this file as settings are altered in the
-    // GUI. If a setting isn't already in one of the lines above, then vscode
-    // will add a new line below. (The first line below is just a dummy line to
-    // guarantee that vscode appends below this comment block.)
-    "workbench.statusBar.visible": true,
-    "workbench.colorTheme": "Leo Light",
-    "window.zoomLevel": 0
+    "vim.foldfix": true,
+    "vim.hlsearch": true,
+    "vim.useSystemClipboard": true
 }

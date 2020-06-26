@@ -1,6 +1,6 @@
 [
     // Explorer
-    // - Behave the same as "space"
+    // - Behave the same as "space" (can keep my finger on ctrl)
     {
         "key": "ctrl+space",
         "command": "filesExplorer.openFilePreserveFocus",

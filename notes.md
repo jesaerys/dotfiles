@@ -240,3 +240,18 @@ Now try making an SSH connection. A password shouldn't be required. For GitHub,
 ```bash
 ssh -T git@github.com
 ```
+
+
+
+6. Changing the default shell
+
+To change the default login shell, e.g., to `~/.nix-profile/bin/zsh`, first
+make sure the shell is listed in `/etc/shells`. If it isn't, then add it:
+```
+$ sudo sh -c 'echo ~/.nix-profile/bin/zsh >>/etc/shells'
+```
+
+Then, set it as the default using `chsh`:
+```
+$ chsh -s ~/.nix-profile/bin/zsh
+```

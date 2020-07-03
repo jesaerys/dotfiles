@@ -34,6 +34,9 @@
 
     "markdown.preview.doubleClickToSwitchToEditor": false,
 
+    "path-autocomplete.pathMappings": {
+        "/": "/"
+    },
     "path-autocomplete.triggerOutsideStrings": true,
 
     "python.autoComplete.showAdvancedMembers": false,

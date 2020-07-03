@@ -10,6 +10,16 @@ ${HOME}/.local/bin:\
 ${PATH}\
 "
 
+shopt -s histappend
+HISTSIZE=1000
+HISTFILESIZE=1000
+HISTCONTROL=ignoredups:erasedups
+HISTTIMEFORMAT='%F %T  '
+
+function myPromptCommand {
+    history -a
+}
+PROMPT_COMMAND=myPromptCommand
 PS1='\[\e[1m\]❯ \[\e[0m\]'
 
 export EDITOR=vi

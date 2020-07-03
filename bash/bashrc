@@ -22,6 +22,12 @@ function myPromptCommand {
 PROMPT_COMMAND=myPromptCommand
 PS1='\[\e[1m\]❯ \[\e[0m\]'
 
+PATH="\
+${HOME}/.local/bin:\
+/Applications/Visual Studio Code.app/Contents/Resources/app/bin:\
+${PATH}\
+"
+
 export EDITOR=vi
 
 source "${HOME}/.dotfiles/readline/init"

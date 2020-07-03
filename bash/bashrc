@@ -16,11 +16,7 @@ function myPromptCommand {
 PROMPT_COMMAND=myPromptCommand
 PS1='\[\e[1m\]❯ \[\e[0m\]'
 
-PATH="\
-${HOME}/.local/bin:\
-/Applications/Visual Studio Code.app/Contents/Resources/app/bin:\
-${PATH}\
-"
+PATH="${HOME}/.local/bin:${PATH}"
 
 export EDITOR=vi
 
@@ -29,5 +25,6 @@ source "${HOME}/.dotfiles/ls/init"
 source "${HOME}/.dotfiles/diff/init"
 source "${HOME}/.dotfiles/grep/init"
 source "${HOME}/.dotfiles/direnv/init"
+source "${HOME}/.dotfiles/vscode/init"
 
 [[ -f "${HOME}/.config/dotfiles/post" ]] && source "${HOME}/.config/dotfiles/post"

@@ -10,10 +10,8 @@ ${HOME}/.local/bin:\
 ${PATH}\
 "
 
-export PS1='\[\e[1m\]❯ \[\e[0m\]'
-#export PS1='\[\e[1m\]\W ❯ \[\e[0m\]'
-#export PS1='\n\[\e[1m\]\W ❯ \[\e[0m\]'
-#export PS1='\n\[\e[1m\]\w\n❯ \[\e[0m\]'
+PS1='\[\e[1m\]❯ \[\e[0m\]'
+
 export EDITOR=vi
 
 source "${HOME}/.dotfiles/readline/init"

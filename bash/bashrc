@@ -4,12 +4,6 @@ shopt -s \
     dotglob \
     extglob
 
-PATH="\
-${HOME}/.local/bin:\
-/Applications/Visual Studio Code.app/Contents/Resources/app/bin:\
-${PATH}\
-"
-
 shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=1000

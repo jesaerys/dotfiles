@@ -20,6 +20,35 @@ PATH="${HOME}/.local/bin:${PATH}"
 
 export EDITOR=vi
 
+
+function status {
+    local lines=''
+
+    lines+="Current directory\t$(pwd)\n"
+
+    local job_count="$(jobs | wc -l)"
+    if (( job_count > 0 )); then
+        lines+="Jobs\t${job_count}\n"
+    fi
+
+    if git rev-parse --is-inside-work-tree &>/dev/null; then
+        lines+="Git branch\t$(git rev-parse --abbrev-ref HEAD)\n"
+    fi
+
+    if [[ ${IN_NIX_SHELL+exists} = 'exists' ]]; then
+        lines+="Nix shell\t${name}\n"
+    fi
+
+    if [[ ${VIRTUAL_ENV+exists} = 'exists' ]]; then
+        lines+="Python virtual environment\t${VIRTUAL_ENV##*/}\n"
+    fi
+
+    printf "$lines" | column -s $'\t' -t
+}
+
+alias st=status
+
+
 source "${HOME}/.dotfiles/readline/init"
 source "${HOME}/.dotfiles/ls/init"
 source "${HOME}/.dotfiles/diff/init"

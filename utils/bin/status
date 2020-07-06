@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+DELIM="%"
+
+function main {
+    echoLines | column -s "$DELIM" -t
+}
+
+function echoLines {
+    echo "Current directory${DELIM}$(pwd)"
+
+    if inGitRepo; then
+        echo "Git${DELIM}$(gitBranchName)"
+    fi
+
+    if inNixShell; then
+        echo "Nix shell${DELIM}$(nixShellName)"
+    fi
+
+    if inPythonVirtualEnv; then
+        echo "Python virtual environment${DELIM}$(pythonVirtualEnvName)"
+    fi
+}
+
+
+function inGitRepo {
+    git rev-parse --is-inside-work-tree &>/dev/null
+}
+
+function gitBranchName {
+    git rev-parse --abbrev-ref HEAD
+}
+
+
+function inNixShell {
+    [[ ${IN_NIX_SHELL+exists} = 'exists' ]]
+}
+
+function nixShellName {
+    echo "$name"
+}
+
+
+function inPythonVirtualEnv {
+    [[ ${VIRTUAL_ENV+exists} = 'exists' ]]
+}
+
+function pythonVirtualEnvName {
+    echo "${VIRTUAL_ENV##*/}"
+}
+
+
+main

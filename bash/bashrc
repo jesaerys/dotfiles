@@ -10,11 +10,10 @@ HISTFILESIZE=1000
 HISTCONTROL=ignoredups:erasedups
 HISTTIMEFORMAT='%F %T  '
 
-function myPromptCommand {
+function promptCommand {
     history -a
 }
-PROMPT_COMMAND=myPromptCommand
-PS1='\[\e[1m\]❯ \[\e[0m\]'
+PROMPT_COMMAND=promptCommand
 
 PATH="${HOME}/.local/bin:${PATH}"
 

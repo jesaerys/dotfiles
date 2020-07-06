@@ -12,6 +12,7 @@ HISTTIMEFORMAT='%F %T  '
 
 function promptCommand {
     history -a
+    PS1='\[\e[1m\]❯ \[\e[0m\]'
 }
 PROMPT_COMMAND=promptCommand
 

@@ -26,6 +26,5 @@ source "${HOME}/.dotfiles/diff/init"
 source "${HOME}/.dotfiles/grep/init"
 source "${HOME}/.dotfiles/direnv/init"
 source "${HOME}/.dotfiles/vscode/init"
-source "${HOME}/.dotfiles/utils/init"
 
 [[ -f "${HOME}/.config/dotfiles/post" ]] && source "${HOME}/.config/dotfiles/post"

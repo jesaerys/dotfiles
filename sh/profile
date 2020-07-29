@@ -6,6 +6,9 @@
 . "${HOME}/.dotfiles/vscode/init"
 . "${HOME}/.nix-profile/share/git/contrib/completion/git-prompt.sh"
 
+. "${HOME}/.dotfiles/sh/shorten.sh"
+. "${HOME}/.dotfiles/sh/status.sh"
+
 PATH="${HOME}/.local/bin:${PATH}"
 
 export EDITOR=vi

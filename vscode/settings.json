@@ -49,6 +49,12 @@
     "python.linting.mypyArgs": [
         "--show-column-numbers"
     ],
+    "python.terminal.activateEnvironment": false,
+    "python.venvPath": "~/Library/Caches/pypoetry/virtualenvs",
+
+    "[nix]": {
+        "editor.tabSize": 2
+    },
 
     "vim.foldfix": true,
     "vim.hlsearch": true,

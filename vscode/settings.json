@@ -23,6 +23,10 @@
     "extensions.showRecommendationsOnlyOnDemand": true,
 
     "terminal.integrated.lineHeight": 1.4,
+    "terminal.integrated.inheritEnv": false,
+    "terminal.integrated.env.osx": {
+        "USER": "z001j0s"
+    },
 
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,

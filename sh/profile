@@ -1,0 +1,13 @@
+. "${HOME}/.dotfiles/readline/init"
+. "${HOME}/.dotfiles/ls/init"
+. "${HOME}/.dotfiles/diff/init"
+. "${HOME}/.dotfiles/grep/init"
+#. "${HOME}/.dotfiles/direnv/init"
+. "${HOME}/.dotfiles/vscode/init"
+. "${HOME}/.nix-profile/share/git/contrib/completion/git-prompt.sh"
+
+PATH="${HOME}/.local/bin:${PATH}"
+
+export EDITOR=vi
+
+test -f "${HOME}/.config/dotfiles/extra" && . "${HOME}/.config/dotfiles/extra"

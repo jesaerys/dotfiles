@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-ln -sf "${HOME}/.dotfiles/bash/bash_profile" "${HOME}/.bash_profile"
+ln -sf "${HOME}/.dotfiles/bash/bashrc" "${HOME}/.bash_profile"
 ln -sf "${HOME}/.dotfiles/bash/bashrc" "${HOME}/.bashrc"
 
 mkdir -m 700 -p "${HOME}/.config"

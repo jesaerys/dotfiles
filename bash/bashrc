@@ -1,4 +1,9 @@
-[[ -f "${HOME}/.config/dotfiles/pre" ]] && source "${HOME}/.config/dotfiles/pre"
+source ~/.dotfiles/sh/profile
+
+#. ~/.nix-profile/share/fzf/completion.bash
+#. ~/.nix-profile/share/fzf/key-bindings.bash
+. ~/.nix-profile/share/git/contrib/completion/git-completion.bash
+
 
 shopt -s \
     dotglob \

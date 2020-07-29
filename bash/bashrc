@@ -4,11 +4,13 @@ shopt -s \
     dotglob \
     extglob
 
+
 shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=1000
 HISTCONTROL=ignoredups:erasedups
 HISTTIMEFORMAT='%F %T  '
+PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
 function promptCommand {
     history -a

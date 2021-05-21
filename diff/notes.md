@@ -1,4 +1,0 @@
-```
-nix-env -i diffutils
-```
-

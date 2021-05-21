@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-mkdir -p "${HOME}/.local/bin"
-ln -sf "${HOME}/.dotfiles/ls/bin"/* "${HOME}/.local/bin"

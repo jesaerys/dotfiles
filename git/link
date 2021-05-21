@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-mkdir -p "${HOME}/.config/git"
-ln -sf "${HOME}/.dotfiles/git/ignore" "${HOME}/.config/git/ignore"

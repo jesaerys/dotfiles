@@ -1,8 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =6
-let g:netrw_dirhist_1='/Users/z001j0s/projects/BackSim/libraries/scala/BackSimSparkEngine/src/main/scala/tgt'
-let g:netrw_dirhist_2='/Users/z001j0s/projects/BackSim/libraries/scala/BackSimSparkEngine/src/main/scala/tgt/edabi'
-let g:netrw_dirhist_3='/Users/z001j0s/projects/BackSim/libraries/scala/BackSimSparkEngine/src/main/scala/tgt/edabi/dso'
-let g:netrw_dirhist_4='/Users/z001j0s/projects/BackSim/libraries/scala/BackSimSparkEngine/src/main/scala/tgt/edabi/dso/backsim'
-let g:netrw_dirhist_5='/Users/z001j0s/projects/BackSim/libraries/scala/BackSimSparkEngine/src/main/scala/tgt/edabi/dso/backsim/data'
-let g:netrw_dirhist_6='/Users/z001j0s/projects/BackSim/libraries/scala/BackSimSparkEngine/src/main/scala/tgt/edabi/dso/backsim/data/simulation'

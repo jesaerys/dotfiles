@@ -1,4 +1,0 @@
-if diff --color=auto - - &>/dev/null; then
-    # --color is only available in more recent versions of diff
-    alias diff='diff --color=auto'
-fi

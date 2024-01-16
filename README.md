@@ -7,27 +7,58 @@ WIP setup for Oyrx Pro (oryp10) running Pop!_OS.
 
 * Set up Pop!_os (create account, tweak some basic desktop settings)
 
+  * Set the power profile to "Battery Life". This seems to help tame the fans a
+    bit (the fans tend to sporadically run high during apparently normal
+    activities while on the default "Balanced" setting). I'm not yet sure
+    whether this setting actually helps the battery last longer. I added this to
+    Startup Applications to automatically re-enable the setting after reboot:
+    `system76-power profile battery`.
+
+  * Switched from "Hybrid Graphics" (the default) to "Integrated Graphics". I
+    did this because when I first got the Oryx Pro, it would often not wake from
+    sleep. System76 support eventually suggested switching to integrated
+    graphics and I haven't had any issues with waking ever since. It's probably
+    worth trying out hybrid graphics every now and then to see if the drivers
+    have improved, as I get a sense that hybrid graphics is really the mode that
+    System76 intends folks to use.
+
 * Set up firefox (sign in, tweak settings)
 
-  * Added "Yet Another Smooth Scrolling WE" extension to Firefox because
-    scrolling with the touchpad *really* sucks for some reason. The extension
-    does help, though it's more like using a smooth mousewheel than an apple
-    trackpad. Syncs with firefox, only enabled for linux.
-
+  * Scrolling with the touchpad in firefox on linux *really* sucks for some
+    reason. It's choppy and not at all smooth, despite having "smooth scrolling"
+    enabled in settings. I found a reddit thread that recommended the following,
+    which helps a lot:
+    ```sh
+    echo export MOZ_USE_XINPUT2=1 | sudo tee /etc/profile.d/use-xinput2.sh
+    ```
+    The resulting scrolling behavior feels a bit too "intertial", but it's way
+    better than the default.
+  
 * Disabled tap-dragging:
   `xinput set-prop 'ELAN0412:00 04F3:316F Touchpad' 'libinput Tapping Drag Enabled' 0`
+
   * Inspired by https://askubuntu.com/questions/1032459/how-to-disable-the-tap-dragging-feature-in-ubuntu-18-04-libinput-without-dis
+
   * tl;dr:
+
     * `xinput list` to find the name and ID of the touchpad:
+
       * device name: 'ELAN0412:00 04F3:316F Touchpad'
+
       * ID: 13
+
     * `xinput list-props 13` to find the name of the property for tap dragging:
+
       * property name: 'libinput Tapping Drag Enabled'
+
     * `xinput set-prop ... 0` as shown above to disable
+
     * `xinput list-props 13` again to verify
+
   * Added an entry for this in Startup Applications, resulting in the file
     `cat ~/.config/autostart/xinput.desktop`, which can be added to source
     control.
+
   * ISSUE: the touchpad seems to reset after waking, so I have to rerun the the
     `xinput` command after every wake. Instead of mucking around with on-wake
     automation involving system files and `sudo`, I decided to just add the
@@ -37,6 +68,7 @@ WIP setup for Oyrx Pro (oryp10) running Pop!_OS.
 * Installed slack (flatpak) from the pop shop.
 
 * Installed vscode (deb) from the pop shop.
+
   * I originally tried installing the flatpak version, but it's not able to use
     system SDKs, and it seems like that would cause problems down the road.
 
@@ -87,6 +119,37 @@ WIP setup for Oyrx Pro (oryp10) running Pop!_OS.
     ```
 
   * `kmonad` was then available in `~/.local/bin`.
+
+  * When I first tried to apply a keymap with `kmonad mymap.kbd`, I got:
+    ```
+    kmonad: /dev/uinput: openFd: permission denied (Permission denied)
+    ```
+    Looking at the [Linux FAQ][linux-faq], getting uinput permissions requires
+    some extra steps.
+
+    * I had to reboot after adding myself to the `input` and `uinput` groups
+      before the `groups` command showed that I belonged to them.
+
+    * I (sudo) created `/lib/udev/rules.d/99-kmonad.rules` with the recommended
+      line. I used `/lib/udev/rules.d` instead of `/etc/udev/rules.d` because on
+      my system the former already contained a bunch of `*.rules` files and
+      therefore seemed like the right place, whereas the latter was an empty
+      directory. I adopted the existing number-prefix naming convention, using
+      99 to put my file near the end of the list.
+
+    * I had to reboot again so that the uinput module was added to the kernel
+      (verified by running `modprobe --first-time uinput`)
+
+    * I seem to have to run `sudo modprobe uinput` every time I wake and reboot.
+
+  * It isn't really explained in the docs, but `kmonad` works as a running
+    process. For testing out layouts, just run `kmonad mylayoutfile.kbd` in a
+    terminal, type some stuff elsewhere, then ctrl-c to stop `kmonad` in the
+    terminal where it was running. Running it on startup/login will require
+    either an init module or maybe an entry in Startup Applications.
+
+[linux-faq]:
+    https://github.com/kmonad/kmonad/blob/master/doc/faq.md#q-how-do-i-get-uinput-permissions
 
 
 ## Working with multiple GitHub accounts
@@ -191,3 +254,28 @@ This is not a very elegant solution, though.
 Firefox has multi-account containers, which makes it possible to be logged in to
 multiple GitHub accounts simultaneously using a separate container for each
 account.
+
+
+## Dotfiles
+
+I don't have much for actual config files these days. Both vscode and firefox
+manage my settings in the cloud and I don't have a lot of other software to
+configure.
+
+I'm pretty much running the stock `~/.bashrc` from when my user account was
+created. The only customizations I've added to that file are my prompt, the
+tap-drag fix mentioned above, and whatever boilerplate is required for various
+programming languages (e.g., `rustup`, `pyenv`, etc.):
+
+```sh
+PS1='\[\033[01;34m\]\W \$\[\033[00m\] '
+
+# I already added this command in autostart, but the setting is lost during
+# wake from sleep. This stupid hack reapplies the setting when a terminal is
+# launched. It's not ideal, but it avoids having to muck with
+# /lib/systemd/system-sleep/.
+xinput set-prop 'ELAN0412:00 04F3:316F Touchpad' 'libinput Tapping Drag Enabled' 0
+```
+
+Other than that, I only have a couple settings in `~/.gitconfig` and
+`~/.ssh/config` for work and that's it.

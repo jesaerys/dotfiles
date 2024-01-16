@@ -1,0 +1,193 @@
+#| -----------------------------------------------------------------------------
+
+Homerow modifiers with a navigation layer.
+
+Dual-function keys are set up to allow rollovers during normal typing as well as
+autorepeat. The feel is very similar---perhaps identical---to dual-function keys
+in QMK/Oryx with "permissive hold" enabled. This layout retains *almost* all of
+the functionality of a regular keyboard; the only major difference is autorepeat
+on dual-function keys requires a tap-hold instead of a normal hold.
+
+```
+.----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.--------.
+|    |     |     |     |     |     |     |     |     |     |     |     |     |    del |
+| `  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  0  |  -  |  =  | backsp |
+|    |     |     |     |     |     |     |     |     |     |     |     |     |        |
+.-------.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.
+|       |     |     |     |     |     |     | home|  up | end |     |     |     |     |
+|  tab  |  q  |  w  |  e  |  r  |  t  |  y  |  u  |  i  |  o  |  p  |  [  |  ]  |  \  |
+|       |     |     |     |     |     |     |     |     |     |     |     |     |     |
+.---------.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.---------.
+|         |super| alt |ctrl |shift|     |     | left| down|right|     |     |         |
+|   esc   |  a  |  s  |  d  |  f  |  g  |  h  |  j  |  k  |  l  |  ;  |  '  | return  |
+|         |super| alt |ctrl |shift|     |     |shift|ctrl | alt |super|     |         |
+.-----------.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-------------.
+|           |     |     |     |     |     |     | pgup| pgdn|     |     |             |
+|   shift   |  z  |  x  |  c  |  v  |  b  |  n  |  m  |  ,  |  .  |  /  |    shift    |
+|           |     |     |     |     |     |     |     |     |     |     |             |
+.-----.-----.-----.-----.-----------------------------.-----.-----.-------.-----------'
+|     |     |     |     |                             |     |     |       |
+|ctrl | fn  |super| alt |            space            | alt |menu | ctrl  |
+|     |     |     |     | nav layer                   |     |     |       |
+'-----'-----'-----'-----'-----------------------------'-----'-----'-------'
+
+  Legend:
+                                            .-----.
+    Normal key value ("j") ------------.    | left| <--- Indicates value, if any,
+                                       '--> |  j  |      in nav layer ("left arrow")
+    Indicates dual-function key,       .--> |shift|
+    value/action when held ("shift") --'    '-----'
+```
+
+Autorepeat for dual-function keys is supported by holding *immediately* after a
+tap. This works because each tap briefly suspends the key's dual-function
+behavior such that holding the key will eventually cause the OS's autorepeat
+feature to kick in.
+
+**Caveat:** the following three-key combos do *not* work on Oryx Pro (oryp10).
+Includes combos with mods on the left hand, combos with mods on the right hand,
+and (for completeness) combos that don't make sense with normal two-hand touch
+typing:
+
+```
+Left mods:                Right mods:              Other:
+a d 7 (super+ctrl+7)      k l r (ctrl+alt+r)       j k y (ctrl+shift+y)
+a d / (super+ctrl+/)      k ; ` (super+ctrl+`)     j l 9 (alt+shift+9)
+a f h (super+shift+h)     k ; q (super+ctrl+q)     j l - (alt+shift+-)
+s d [ (ctrl+alt+[)        k ; g (super+ctrl+g)     j ; y (super+shift+y)
+s f , (alt+shift+,)       k ; z (super+ctrl+z)     k ; o (super+ctrl+o)
+d f . (ctrl+shift+.)      l ; r (super+alt+r)      k ; \ (super+ctrl+\)
+```
+----------------------------------------------------------------------------- |#
+
+(defcfg
+  input (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
+  output (uinput-sink "my kmonad output")
+  fallthrough true
+  allow-cmd false
+)
+
+;; fn key omitted
+(defsrc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt comp rctl
+)
+
+(defalias
+  ;; These buttons both emit the key and switch into a special layer in which
+  ;; the key is just its normal self. The special layer is only active for a
+  ;; brief period of time before and the main layer becomes active again. This
+  ;; is useful for dual-function keys because autorepeat can be triggered with a
+  ;; tap quickly followed by a hold.
+  tapped-a (around a (layer-delay 150 normal-a))
+  tapped-s (around s (layer-delay 150 normal-s))
+  tapped-d (around d (layer-delay 150 normal-d))
+  tapped-f (around f (layer-delay 150 normal-f))
+  tapped-j (around j (layer-delay 150 normal-j))
+  tapped-k (around k (layer-delay 150 normal-k))
+  tapped-l (around l (layer-delay 150 normal-l))
+  tapped-semicolon (around ; (layer-delay 150 normal-semicolon))
+  tapped-space (around spc (layer-delay 150 normal-space))
+
+  ;; Dual-function keys with transient layers for autorepeat:
+  lm (tap-hold-next-release 200 @tapped-a lmet)
+  la (tap-hold-next-release 200 @tapped-s lalt)
+  lc (tap-hold-next-release 200 @tapped-d lctl)
+  ls (tap-hold-next-release 200 @tapped-f lsft)
+  rs (tap-hold-next-release 200 @tapped-j rsft)
+  rc (tap-hold-next-release 200 @tapped-k rctl)
+  ra (tap-hold-next-release 200 @tapped-l ralt)
+  rm (tap-hold-next-release 200 @tapped-semicolon rmet)
+  nav (tap-hold-next-release 200 @tapped-space (layer-toggle nav))
+)
+
+(deflayer main
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  esc  @lm  @la  @lc  @ls  g    h    @rs  @rc  @ra  @rm  '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           @nav           ralt comp rctl
+)
+
+(deflayer nav
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   del
+  XX   XX   XX   XX   XX   XX   XX   home up   end  XX   XX   XX   XX
+  XX   lmet lalt lctl lsft XX   XX   left down rght XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   pgup pgdn XX   XX   XX
+  XX   XX   XX             XX             XX   XX   XX
+)
+
+(deflayer normal-a
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    a    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-s
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    s    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-d
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    d    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-f
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    f    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-j
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    j    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-k
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    k    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-l
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    l    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-semicolon
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    ;    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+)
+
+(deflayer normal-space
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              spc            _    _    _
+)

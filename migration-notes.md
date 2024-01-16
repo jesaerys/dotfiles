@@ -1,6 +1,32 @@
-# Keyboard stuff
+# Migration notes
 
-## Observations
+> *2024-01-16:* It's been a little more than one year since I started using my
+> Oryx Pro with Pop!_OS in late 2022. I had previously been using MacOS on
+> various macbooks for several years, so I had a lot of ingrained habits and
+> muscle memory to deal with and the transition was initially pretty rough. I
+> took a bunch of notes on my experience along the way, and I decided to compile
+> them (somewhat edited) in this doc.
+>
+> I think most of the issues I had have been resolved at this point, so the
+> notes here are just a record of what I used to struggle with. Probably my
+> biggest breakthrough has been using kmonad to switch to a new keyboard layout
+> with homerow modifiers and a nav layer. This has allowed me to stop fussing
+> over the loss of command-key shortcuts and to more comfortably take linux as
+> it is. I've also shifted away from relying on vim keybindings both in vscode
+> and in the terminal. I'm instead using conventional navigation keys (arrows,
+> home/end, pgup/pgdn) which are conveniently available under my fingers in my
+> nav layer. And because the nav keys are now so easy to use, I no longer worry
+> about things like editing text in non-vim contexts, navigating menus (with
+> ctrl-n/ctrl-p), or switching tabs.
+>
+> There are still some things I miss both about my old macbook setup and about
+> vim, but overall I feel just as productive now as I did before I switched to
+> linux.
+ 
+
+## Keyboard stuff
+
+### Observations
 
 ctrl is kind of overloaded in vscode with vscodevim because vim defines
 ctrl-based keybindings that conflict with common system ones. This leads to
@@ -37,7 +63,7 @@ My muscle memory from macos:
 * cmd+l: focus search bar
 
 
-## Shortcuts
+### Shortcuts
 
 One reason not to heavily customize pop_os shortcuts is because I don't want to
 miss out on cool functionality built into the OS, especially as it continues to
@@ -131,7 +157,7 @@ Table of Pop!_OS shortcuts:
 * Idea: another go at homerow modifiers? The philosophy here is instead of
   remapping a bunch shortcuts, remap the keyboard to make shortcuts easier to
   type.
-  * I could set `a` to hyper, and mapped hyper+h/j/k/l to arrow keys
+  * I could set `a` to hyper, and map hyper+h/j/k/l to arrow keys
   * I could take this further by mapping pgup/pgdown to hyper+[/]
     and home/end to hyper+u/i or hyper+o/p.
   * Or use a nav layer instead of hyper
@@ -172,3 +198,142 @@ Drawbacks of home row mods:
 
 Take a look at kmonad: https://github.com/kmonad/kmonad/, https://www.reddit.com/r/vim/comments/pmqj0x/kmonad_gives_you_superpowers_youll_end_up_using/
 * Does this eliminate the need for xcape? sxhkd? autokey?
+
+
+## Things I miss from macos
+
+Is there some way to scroll to zoom?
+
+Is there a way to have automatic switching between light/dark system themes?
+
+Dictionary?
+* I tried Dictionary in the pop shop. It was ok, but no thesaurus.
+* I also tried Hypatia. It says it comes with a thesaurus, but I couldn't figure
+  it out.
+* Maybe I don't need this. It turns out that switching to firefox and using `!d`
+  to search for a word isn't that inconvenient.
+
+
+## Annoyances
+
+System76:
+
+* Wake issues? Examples:
+
+  * I closed the lid while on battery, then a while later I plugged it in and
+    then opened the lid and the system would not wake.
+
+  * In the system menu (w/ volume, wifi, etc) I chose "Power Off / Log Out" >
+    "Suspend", and I wasn't able to wake it up.
+
+  * System76 support suggested the following:
+    ```
+    sudo apt purge ~nvidia
+    sudo apt clean
+    sudo apt update
+    sudo apt install system76-driver-nvidia
+    sudo systemctl reboot
+    ```
+    I ran these commands on 2023-01-05. Time will tell whether it makes a
+    difference.
+
+    2023-01-17: The commands didn't fix the problem.
+
+    2023-01-31: Support had me switch to integrated graphics a week ago, and I
+    haven't had any issues whatsoever. Actually, waking feels significantly
+    snappier now. I told support, and they responded, "We are working on a
+    firmware update to address suspend issues though I don't have an ETA for
+    when it would be released but we are working on!"
+
+* Battery doesn't perform very well
+
+  * Drains noticeably during light use. I haven't tested the life extensively,
+    but, I seriously doubt I would make it through a substantial fraction of a
+    regular work day before having to plug in.
+
+  * Seems to drain overnight. It's as if something is still running after the
+    lid is closed. Sometimes the battery drains completely.
+
+  * Really slow to charge, almost 3 hours to get to 70%.
+
+* Video conferencing is laggy. Here I have this beefy machine, yet doing a
+  google meet in chrome slows my whole system down. `top` consistently shows 
+  100% CPU for the chrome process. Bi-weekly company retro is the worst because
+  I also have the trello board open, which spikes the CPU for firefox. I don't
+  have any issues on my 2015 macbook.
+
+* Speakers are not good. Even my 2015 macbook sounds better than this thing.
+
+* The mic must not be very good because everyone seems to strongly prefer the
+  audio from my headset.
+
+* Fan constantly on and off during light work (e.g., browsing firefox with a
+  few tabs and a terminal session).
+
+* Display flickers sometimes. Closing the lid and waking seems to fix it.
+  (Maybe this is an nvidia driver issue? If so, then maybe it will be resolved
+  at the same time as the wake issue above?)
+
+* Not usually a big deal, but waking often briefly shows my desktop (whatever
+  windows are open) before displaying the login screen. This is technically a
+  security issue given that someone could glance confidential/sensitive
+  information simply by opening the lid.
+
+* I don't like that the keyboard isn't centered. The main part of the keyboard
+  is shoved over to the left to make room for the numpad, which is entirely
+  superfluous.
+
+Slack:
+
+* No system theme sync setting?!?
+
+* Can I make the menu bar go away?
+
+
+## Migration troubles
+
+All of the keyboard issues mentioned above.
+
+My vscode config has a bunch of cmd-based shortcuts that don't port to linux :(
+
+
+## Things I've tried
+
+* Installed keyboard configurator from the pop shop. This app is the system76
+  way to config the keyboard.
+
+  * Set the keyboard to my liking, then exported my config to a file which can
+    be imported later.
+
+  * These remappings happen at the firmware level, so they always apply, e.g.,
+    at the login screen after restarting.
+
+    * This means that if I remap return to ctrl and use xcape to use it as both
+      ctrl and return, then I won't be able to use that key as return until I
+      log in (when the xcape command runs). The Oryx Pro has an enter key in the
+      numpad, so I can always use that.
+
+  * There is a setxkbmap command that can do some of these remappings (e.g.,
+    caps lock to ctrl), but apparently not all of them (e.g., return to ctrl).
+
+  * Seems like kmonad can handle remappings, so I can use that instead of
+    keyboard configurator or setxkbmap.
+
+* Installed xcape (`sudo apt install xcape`)
+
+  * The command `xcape -e 'Control_L=Escape;Control_R=Return'` is used to map
+    caps lock (ctrl) to escape when tapped, and return (ctrl) to return when
+    tapped.
+
+  * The `xev` command is very useful for figuring out the name of a key.
+
+  * Added an entry for this in Startup Applications, resulting in the file
+    `cat ~/.config/autostart/xcape.desktop`, which can be added to source
+    control.
+
+  * Ended up disabling this because not having a functioning Enter key before
+    login was getting annoying. I'll use kmonad for this kind of thing in the
+    future.
+
+Tips and things to look into:
+* https://www.reddit.com/r/pop_os/comments/kvs19m/how_i_back_up_my_keybinds_etc/

@@ -72,6 +72,11 @@ WIP setup for Oyrx Pro (oryp10) running Pop!_OS.
   * I originally tried installing the flatpak version, but it's not able to use
     system SDKs, and it seems like that would cause problems down the road.
 
+  * Set vscode as my git editor (so I don't have to use vi/vim):
+    ```sh
+    git config --global core.editor "code --wait"
+    ```
+
 * Installed rustup: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`.
   This added the line `. "$HOME/.cargo/env"` to both `~/.bashrc` and `~/.profile`.
 

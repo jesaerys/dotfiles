@@ -83,9 +83,18 @@ WIP setup for Oyrx Pro (oryp10) running Pop!_OS.
 * Created another gnome terminal profile that's a copy of "Pop", but with font
   size reduced to 10pt.
 
-* Disabled the "Super+Esc" keyboard shortcut for locking the screen. I did this
-  in Settings > Keyboard > "View and Customize Shortcuts" > System > "Lock
-  screen". Now "Super+Esc" will simply cancel app switching via "Super+Tab".
+* Keyboard shortcuts:
+
+  * Disabled the "Super+Esc" keyboard shortcut for locking the screen. I did
+    this in Settings > Keyboard > "View and Customize Shortcuts" > System >
+    "Lock screen". Now "Super+Esc" will simply cancel app switching via
+    "Super+Tab".
+
+  * Ran `ibus-setup` in the terminal to open the `ibus` config gui, then in the
+    Emoji tab, I changed the "Emoji annotation" shortcut from "ctrl+shift+e" to
+    "ctrl+alt+shift+super+e". I also changed the "Unicode code point" shortcut
+    from "ctrl+shift+u" to "ctrl+alt+shift+super+u". This allows "ctrl+shift+e"
+    to be used in vscode.
 
 * Installed `kmonad`, which is a haskell project built using `stack`. (Release
   binaries are available for linux, but not for macOS, so I thought I might as

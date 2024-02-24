@@ -1,0 +1,10 @@
+# Explicit settings to silence warnings
+[pull]
+	rebase = false
+[init]
+	defaultBranch = main
+
+# Configuration extension mechanism
+[include]
+	path = ~/.config/git/config.extra
+

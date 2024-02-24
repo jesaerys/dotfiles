@@ -1,0 +1,960 @@
+;; https://github.com/pqrs-org/Karabiner-Elements/issues/2348
+
+
+;; -----------------------------------------------------------------------------
+
+;; Using the "simlayers" feature in goku seems to be the idiomatic way to
+;; achieve home-row mods in karabiner. When only a single key is defined (say, f
+;; as shift) this works pretty well:
+;;
+;; * Rollover logic is correct (it feels more natural when `:simlayer-threshold`
+;;   (karabiner's `simultaneous_threshold_milliseconds`) is set to longer amount
+;;   of time like 1000ms.)
+;;
+;; * Holding the mod-tapped key down makes it continue to function as a modifier
+;;   for additional secondary key presses.
+;;
+;; Because this system is based on karabiner keeping track of the key-down/key-up
+;; order for individual pairs of "simultaneous" keys, a rule needs to be defined
+;; for every key that can be paired with the given mod key. That's around 50 rules
+;; to define just one mod-tap key, which is kind of annoying.
+;; 
+;; Unfortunately, things really fall apart when trying to implement multiple
+;; mod-taps:
+;;
+;; * Defining just four mod-taps (command, option, control, and shift as `asdf`)
+;;   leads to hundreds of rules and ***karabiner becomes unusably slow***. This
+;;   is a dealbreaker.
+;;   
+;; * Also, there's no clear method for stacking modifiers. The only idea I have
+;;   is to define an additional simlayer for each possible combination of mods
+;;   (or something like that), though this just adds more rules to an already
+;;   unusable system.
+;;
+;; I only see two workarounds at this point:
+;;
+;; 1. Implement home-row mods using a time-based system, i.e., a key acts as a
+;;    modifier if it is held longer than a given threshold. Not as ideal as roll
+;;    logic, but it's workable it tuned correctly.
+;;
+;; 2. Wait for kmonad to get better on macos :(
+;;
+
+;;{
+;;    :profiles {
+;;        :Default {
+;;            :default true
+;;        }
+;;    }
+;;
+;;    :simlayers {
+;;        :a-mode {:key :a}
+;;        :s-mode {:key :s}
+;;        :d-mode {:key :d}
+;;        :f-mode {:key :f}
+;;    }
+;;    :simlayer-threshold 1000
+;;
+;;    :main [
+;;        {
+;;            :des "caps lock to escape"
+;;            :rules [
+;;                [:##caps_lock :escape]
+;;            ]
+;;        }
+;;
+;;        {
+;;            :des "a as left command"
+;;            :rules [
+;;                [:escape                 :!Cescape                 :a-mode]
+;;                [:grave_accent_and_tilde :!Cgrave_accent_and_tilde :a-mode]
+;;                [:1                      :!C1                      :a-mode]
+;;                [:2                      :!C2                      :a-mode]
+;;                [:3                      :!C3                      :a-mode]
+;;                [:4                      :!C4                      :a-mode]
+;;                [:5                      :!C5                      :a-mode]
+;;                [:6                      :!C6                      :a-mode]
+;;                [:7                      :!C7                      :a-mode]
+;;                [:8                      :!C8                      :a-mode]
+;;                [:9                      :!C9                      :a-mode]
+;;                [:0                      :!C0                      :a-mode]
+;;                [:hyphen                 :!Chyphen                 :a-mode]
+;;                [:equal_sign             :!Cequal_sign             :a-mode]
+;;                [:delete_or_backspace    :!Cdelete_or_backspace    :a-mode]
+;;                [:tab                    :!Ctab                    :a-mode]
+;;                [:q                      :!Cq                      :a-mode]
+;;                [:w                      :!Cw                      :a-mode]
+;;                [:e                      :!Ce                      :a-mode]
+;;                [:r                      :!Cr                      :a-mode]
+;;                [:t                      :!Ct                      :a-mode]
+;;                [:y                      :!Cy                      :a-mode]
+;;                [:u                      :!Cu                      :a-mode]
+;;                [:i                      :!Ci                      :a-mode]
+;;                [:o                      :!Co                      :a-mode]
+;;                [:p                      :!Cp                      :a-mode]
+;;                [:open_bracket           :!Copen_bracket           :a-mode]
+;;                [:close_bracket          :!Cclose_bracket          :a-mode]
+;;                [:backslash              :!Cbackslash              :a-mode]
+;;                [:g                      :!Cg                      :a-mode]
+;;                [:h                      :!Ch                      :a-mode]
+;;                [:j                      :!Cj                      :a-mode]
+;;                [:k                      :!Ck                      :a-mode]
+;;                [:l                      :!Cl                      :a-mode]
+;;                [:semicolon              :!Csemicolon              :a-mode]
+;;                [:quote                  :!Cquote                  :a-mode]
+;;                [:return_or_enter        :!Creturn_or_enter        :a-mode]
+;;                [:z                      :!Cz                      :a-mode]
+;;                [:x                      :!Cx                      :a-mode]
+;;                [:c                      :!Cc                      :a-mode]
+;;                [:v                      :!Cv                      :a-mode]
+;;                [:b                      :!Cb                      :a-mode]
+;;                [:n                      :!Cn                      :a-mode]
+;;                [:m                      :!Cm                      :a-mode]
+;;                [:comma                  :!Ccomma                  :a-mode]
+;;                [:period                 :!Cperiod                 :a-mode]
+;;                [:slash                  :!Cslash                  :a-mode]
+;;                [:spacebar               :!Cspacebar               :a-mode]
+;;                [:up_arrow               :!Cup_arrow               :a-mode]
+;;                [:down_arrow             :!Cdown_arrow             :a-mode]
+;;                [:left_arrow             :!Cleft_arrow             :a-mode]
+;;                [:right_arrow            :!Cright_arrow            :a-mode]
+;;            ]
+;;        }
+;;
+;;        {
+;;            :des "s as left option"
+;;            :rules [
+;;                [:escape                 :!Oescape                 :s-mode]
+;;                [:grave_accent_and_tilde :!Ograve_accent_and_tilde :s-mode]
+;;                [:1                      :!O1                      :s-mode]
+;;                [:2                      :!O2                      :s-mode]
+;;                [:3                      :!O3                      :s-mode]
+;;                [:4                      :!O4                      :s-mode]
+;;                [:5                      :!O5                      :s-mode]
+;;                [:6                      :!O6                      :s-mode]
+;;                [:7                      :!O7                      :s-mode]
+;;                [:8                      :!O8                      :s-mode]
+;;                [:9                      :!O9                      :s-mode]
+;;                [:0                      :!O0                      :s-mode]
+;;                [:hyphen                 :!Ohyphen                 :s-mode]
+;;                [:equal_sign             :!Oequal_sign             :s-mode]
+;;                [:delete_or_backspace    :!Odelete_or_backspace    :s-mode]
+;;                [:tab                    :!Otab                    :s-mode]
+;;                [:q                      :!Oq                      :s-mode]
+;;                [:w                      :!Ow                      :s-mode]
+;;                [:e                      :!Oe                      :s-mode]
+;;                [:r                      :!Or                      :s-mode]
+;;                [:t                      :!Ot                      :s-mode]
+;;                [:y                      :!Oy                      :s-mode]
+;;                [:u                      :!Ou                      :s-mode]
+;;                [:i                      :!Oi                      :s-mode]
+;;                [:o                      :!Oo                      :s-mode]
+;;                [:p                      :!Op                      :s-mode]
+;;                [:open_bracket           :!Oopen_bracket           :s-mode]
+;;                [:close_bracket          :!Oclose_bracket          :s-mode]
+;;                [:backslash              :!Obackslash              :s-mode]
+;;                [:g                      :!Og                      :s-mode]
+;;                [:h                      :!Oh                      :s-mode]
+;;                [:j                      :!Oj                      :s-mode]
+;;                [:k                      :!Ok                      :s-mode]
+;;                [:l                      :!Ol                      :s-mode]
+;;                [:semicolon              :!Osemicolon              :s-mode]
+;;                [:quote                  :!Oquote                  :s-mode]
+;;                [:return_or_enter        :!Oreturn_or_enter        :s-mode]
+;;                [:z                      :!Oz                      :s-mode]
+;;                [:x                      :!Ox                      :s-mode]
+;;                [:c                      :!Oc                      :s-mode]
+;;                [:v                      :!Ov                      :s-mode]
+;;                [:b                      :!Ob                      :s-mode]
+;;                [:n                      :!On                      :s-mode]
+;;                [:m                      :!Om                      :s-mode]
+;;                [:comma                  :!Ocomma                  :s-mode]
+;;                [:period                 :!Operiod                 :s-mode]
+;;                [:slash                  :!Oslash                  :s-mode]
+;;                [:spacebar               :!Ospacebar               :s-mode]
+;;                [:up_arrow               :!Oup_arrow               :s-mode]
+;;                [:down_arrow             :!Odown_arrow             :s-mode]
+;;                [:left_arrow             :!Oleft_arrow             :s-mode]
+;;                [:right_arrow            :!Oright_arrow            :s-mode]
+;;            ]
+;;        }
+;;        
+;;        {
+;;            :des "d as left control"
+;;            :rules [
+;;                [:escape                 :!Tescape                 :d-mode]
+;;                [:grave_accent_and_tilde :!Tgrave_accent_and_tilde :d-mode]
+;;                [:1                      :!T1                      :d-mode]
+;;                [:2                      :!T2                      :d-mode]
+;;                [:3                      :!T3                      :d-mode]
+;;                [:4                      :!T4                      :d-mode]
+;;                [:5                      :!T5                      :d-mode]
+;;                [:6                      :!T6                      :d-mode]
+;;                [:7                      :!T7                      :d-mode]
+;;                [:8                      :!T8                      :d-mode]
+;;                [:9                      :!T9                      :d-mode]
+;;                [:0                      :!T0                      :d-mode]
+;;                [:hyphen                 :!Thyphen                 :d-mode]
+;;                [:equal_sign             :!Tequal_sign             :d-mode]
+;;                [:delete_or_backspace    :!Tdelete_or_backspace    :d-mode]
+;;                [:tab                    :!Ttab                    :d-mode]
+;;                [:q                      :!Tq                      :d-mode]
+;;                [:w                      :!Tw                      :d-mode]
+;;                [:e                      :!Te                      :d-mode]
+;;                [:r                      :!Tr                      :d-mode]
+;;                [:t                      :!Tt                      :d-mode]
+;;                [:y                      :!Ty                      :d-mode]
+;;                [:u                      :!Tu                      :d-mode]
+;;                [:i                      :!Ti                      :d-mode]
+;;                [:o                      :!To                      :d-mode]
+;;                [:p                      :!Tp                      :d-mode]
+;;                [:open_bracket           :!Topen_bracket           :d-mode]
+;;                [:close_bracket          :!Tclose_bracket          :d-mode]
+;;                [:backslash              :!Tbackslash              :d-mode]
+;;                [:g                      :!Tg                      :d-mode]
+;;                [:h                      :!Th                      :d-mode]
+;;                [:j                      :!Tj                      :d-mode]
+;;                [:k                      :!Tk                      :d-mode]
+;;                [:l                      :!Tl                      :d-mode]
+;;                [:semicolon              :!Tsemicolon              :d-mode]
+;;                [:quote                  :!Tquote                  :d-mode]
+;;                [:return_or_enter        :!Treturn_or_enter        :d-mode]
+;;                [:z                      :!Tz                      :d-mode]
+;;                [:x                      :!Tx                      :d-mode]
+;;                [:c                      :!Tc                      :d-mode]
+;;                [:v                      :!Tv                      :d-mode]
+;;                [:b                      :!Tb                      :d-mode]
+;;                [:n                      :!Tn                      :d-mode]
+;;                [:m                      :!Tm                      :d-mode]
+;;                [:comma                  :!Tcomma                  :d-mode]
+;;                [:period                 :!Tperiod                 :d-mode]
+;;                [:slash                  :!Tslash                  :d-mode]
+;;                [:spacebar               :!Tspacebar               :d-mode]
+;;                [:up_arrow               :!Tup_arrow               :d-mode]
+;;                [:down_arrow             :!Tdown_arrow             :d-mode]
+;;                [:left_arrow             :!Tleft_arrow             :d-mode]
+;;                [:right_arrow            :!Tright_arrow            :d-mode]
+;;            ]
+;;        }
+;;
+;;        {
+;;            :des "f as left shift"
+;;            :rules [
+;;                [:escape                 :!Sescape                 :f-mode]
+;;                [:grave_accent_and_tilde :!Sgrave_accent_and_tilde :f-mode]
+;;                [:1                      :!S1                      :f-mode]
+;;                [:2                      :!S2                      :f-mode]
+;;                [:3                      :!S3                      :f-mode]
+;;                [:4                      :!S4                      :f-mode]
+;;                [:5                      :!S5                      :f-mode]
+;;                [:6                      :!S6                      :f-mode]
+;;                [:7                      :!S7                      :f-mode]
+;;                [:8                      :!S8                      :f-mode]
+;;                [:9                      :!S9                      :f-mode]
+;;                [:0                      :!S0                      :f-mode]
+;;                [:hyphen                 :!Shyphen                 :f-mode]
+;;                [:equal_sign             :!Sequal_sign             :f-mode]
+;;                [:delete_or_backspace    :!Sdelete_or_backspace    :f-mode]
+;;                [:tab                    :!Stab                    :f-mode]
+;;                [:q                      :!Sq                      :f-mode]
+;;                [:w                      :!Sw                      :f-mode]
+;;                [:e                      :!Se                      :f-mode]
+;;                [:r                      :!Sr                      :f-mode]
+;;                [:t                      :!St                      :f-mode]
+;;                [:y                      :!Sy                      :f-mode]
+;;                [:u                      :!Su                      :f-mode]
+;;                [:i                      :!Si                      :f-mode]
+;;                [:o                      :!So                      :f-mode]
+;;                [:p                      :!Sp                      :f-mode]
+;;                [:open_bracket           :!Sopen_bracket           :f-mode]
+;;                [:close_bracket          :!Sclose_bracket          :f-mode]
+;;                [:backslash              :!Sbackslash              :f-mode]
+;;                [:g                      :!Sg                      :f-mode]
+;;                [:h                      :!Sh                      :f-mode]
+;;                [:j                      :!Sj                      :f-mode]
+;;                [:k                      :!Sk                      :f-mode]
+;;                [:l                      :!Sl                      :f-mode]
+;;                [:semicolon              :!Ssemicolon              :f-mode]
+;;                [:quote                  :!Squote                  :f-mode]
+;;                [:return_or_enter        :!Sreturn_or_enter        :f-mode]
+;;                [:z                      :!Sz                      :f-mode]
+;;                [:x                      :!Sx                      :f-mode]
+;;                [:c                      :!Sc                      :f-mode]
+;;                [:v                      :!Sv                      :f-mode]
+;;                [:b                      :!Sb                      :f-mode]
+;;                [:n                      :!Sn                      :f-mode]
+;;                [:m                      :!Sm                      :f-mode]
+;;                [:comma                  :!Scomma                  :f-mode]
+;;                [:period                 :!Speriod                 :f-mode]
+;;                [:slash                  :!Sslash                  :f-mode]
+;;                [:spacebar               :!Sspacebar               :f-mode]
+;;                [:up_arrow               :!Sup_arrow               :f-mode]
+;;                [:down_arrow             :!Sdown_arrow             :f-mode]
+;;                [:left_arrow             :!Sleft_arrow             :f-mode]
+;;                [:right_arrow            :!Sright_arrow            :f-mode]
+;;            ]
+;;        }
+;;    ]
+;;}
+
+;; -----------------------------------------------------------------------------
+
+;; This *almost* works. The only problem is that quick rolls from a home-row key
+;; to a non-home-row get flipped. Some examples:
+;;
+;; * Typing "almost" comes out as "almots" (quick roll from "s" to "t")
+;; * Typing "that" comes out as "thta" (quick roll from "a" to "t")
+;;
+;; Overall, I make far too many mistakes in this system for it to be usable.
+
+;;{
+;;    :profiles {
+;;        :Default {
+;;            :default false
+;;            :held 100 ;; key will be a modifier if held longer than this
+;;        }
+;;    }
+;;
+;;    :main [
+;;        {
+;;            :des "caps lock to escape"
+;;            :rules [
+;;                [:##caps_lock :escape]
+;;            ]
+;;        }
+;;
+;;        {
+;;            :des "home-row mods"
+;;            :rules [
+;;                [:##a nil nil {:afterup {:key :a} :held {:key :left_command :halt true}}]
+;;                [:##s nil nil {:afterup {:key :s} :held {:key :left_option :halt true}}]
+;;                [:##d nil nil {:afterup {:key :d} :held {:key :left_control :halt true}}]
+;;                [:##f nil nil {:afterup {:key :f} :held {:key :left_shift :halt true}}]
+;;                [:##j nil nil {:afterup {:key :j} :held {:key :right_shift :halt true}}]
+;;                [:##k nil nil {:afterup {:key :k} :held {:key :right_control :halt true}}]
+;;                [:##l nil nil {:afterup {:key :l} :held {:key :right_option :halt true}}]
+;;                [:##semicolon nil nil {:afterup {:key :semicolon} :held {:key :right_command :halt true}}]
+;;            ]
+;;        }
+;;    ]
+;;}
+
+
+;; -----------------------------------------------------------------------------
+
+;; I think this is the best I can do. Quick rolls don't seem to be a problem at
+;; all, and I don't seem make any mistakes while typing normally.
+;;
+;; The only thing I need to practice is slowing down just a little bit when
+;; entering a combo so that the mod-tap key registers as a modifier.
+;;
+;; Based on https://github.com/gabriel-gardner/modtap-karabiner/blob/main/modtap_example.edn
+{
+    :profiles {
+        :Default {
+            :default true
+            :delay 150
+            :held 150
+            :alone 149
+            ;; Not sure why, but according to the example .edn file, :alone
+            ;; needs to be just less than :held and :delay
+        } 
+    }
+
+    :main [
+        {
+            :des "caps lock to escape"
+            :rules [
+                [:##caps_lock :escape]
+            ]
+        }
+
+        {
+            :des "mod-tap layers"
+            :rules [
+                [
+                    :a
+                    nil
+                    [:!s-mode :!d-mode :!f-mode :!j-mode :!k-mode :!l-mode :!sc-mode]
+                    {
+                        :alone {:key :a :halt true}
+                        :delayed {:canceled {:key :a}}
+                        :held {:set ["a-mode" 1] :repeat false}
+                        :afterup {:set ["a-mode" 0]}
+                    }
+                ]
+                [
+                    :s
+                    nil
+                    [:!a-mode :!d-mode :!f-mode :!j-mode :!k-mode :!l-mode :!sc-mode]
+                    {
+                        :alone {:key :s :halt true}
+                        :delayed {:canceled {:key :s}}
+                        :held {:set ["s-mode" 1] :repeat false}
+                        :afterup {:set ["s-mode" 0]}
+                    }
+                ]
+                [
+                    :d
+                    nil
+                    [:!a-mode :!s-mode :!f-mode :!j-mode :!k-mode :!l-mode :!sc-mode]
+                    {
+                        :alone {:key :d :halt true}
+                        :delayed {:canceled {:key :d}}
+                        :held {:set ["d-mode" 1] :repeat false}
+                        :afterup {:set ["d-mode" 0]}
+                    }
+                ]
+                [
+                    :f
+                    nil
+                    [:!a-mode :!s-mode :!d-mode :!j-mode :!k-mode :!l-mode :!sc-mode]
+                    {
+                        :alone {:key :f :halt true}
+                        :delayed {:canceled {:key :f}}
+                        :held {:set ["f-mode" 1] :repeat false}
+                        :afterup {:set ["f-mode" 0]}
+                    }
+                ]
+                [
+                    :j
+                    nil
+                    [:!a-mode :!s-mode :!d-mode :!f-mode :!k-mode :!l-mode :!sc-mode]
+                    {
+                        :alone {:key :j :halt true}
+                        :delayed {:canceled {:key :j}}
+                        :held {:set ["j-mode" 1] :repeat false}
+                        :afterup {:set ["j-mode" 0]}
+                    }
+                ]
+                [
+                    :k
+                    nil
+                    [:!a-mode :!s-mode :!d-mode :!f-mode :!j-mode :!l-mode :!sc-mode]
+                    {
+                        :alone {:key :k :halt true}
+                        :delayed {:canceled {:key :k}}
+                        :held {:set ["k-mode" 1] :repeat false}
+                        :afterup {:set ["k-mode" 0]}
+                    }
+                ]
+                [
+                    :l nil
+                    [:!a-mode :!s-mode :!d-mode :!f-mode :!j-mode :!k-mode :!sc-mode]
+                    {
+                        :alone {:key :l :halt true}
+                        :delayed {:canceled {:key :l}}
+                        :held {:set ["l-mode" 1] :repeat false}
+                        :afterup {:set ["l-mode" 0]}
+                    }
+                ]
+                [
+                    :semicolon nil
+                    [:!a-mode :!s-mode :!d-mode :!f-mode :!j-mode :!k-mode :!l-mode]
+                    {
+                        :alone {:key :semicolon :halt true}
+                        :delayed {:canceled {:key :semicolon}}
+                        :held {:set ["sc-mode" 1] :repeat false}
+                        :afterup {:set ["sc-mode" 0]}
+                    }
+                ]
+            ]
+        }
+
+        {
+            :des "a-mode"
+            :rules [
+                :a-mode
+                [:##escape :!Cescape]
+                [:##grave_accent_and_tilde :!Cgrave_accent_and_tilde]
+                [:##1 :!C1]
+                [:##2 :!C2]
+                [:##3 :!C3]
+                [:##4 :!C4]
+                [:##5 :!C5]
+                [:##6 :!C6]
+                [:##7 :!C7]
+                [:##8 :!C8]
+                [:##9 :!C9]
+                [:##0 :!C0]
+                [:##hyphen :!Chyphen]
+                [:##equal_sign :!Cequal_sign]
+                [:##delete_or_backspace :!Cdelete_or_backspace]
+                [:##tab :!Ctab]
+                [:##q :!Cq]
+                [:##w :!Cw]
+                [:##e :!Ce]
+                [:##r :!Cr]
+                [:##t :!Ct]
+                [:##y :!Cy]
+                [:##u :!Cu]
+                [:##i :!Ci]
+                [:##o :!Co]
+                [:##p :!Cp]
+                [:##open_bracket :!Copen_bracket]
+                [:##close_bracket :!Cclose_bracket]
+                [:##backslash :!Cbackslash]
+                [:##s :left_option]
+                [:##d :left_control]
+                [:##f :left_shift]
+                [:##g :!Cg]
+                [:##h :!Ch]
+                [:##j :!Cj]
+                [:##k :!Ck]
+                [:##l :!Cl]
+                [:##semicolon :!Csemicolon]
+                [:##quote :!Cquote]
+                [:##return_or_enter :!Creturn_or_enter]
+                [:##z :!Cz]
+                [:##x :!Cx]
+                [:##c :!Cc]
+                [:##v :!Cv]
+                [:##b :!Cb]
+                [:##n :!Cn]
+                [:##m :!Cm]
+                [:##comma :!Ccomma]
+                [:##period :!Cperiod]
+                [:##slash :!Cslash]
+                [:##spacebar :!Cspacebar]
+                [:##up_arrow :!Cup_arrow]
+                [:##down_arrow :!Cdown_arrow]
+                [:##left_arrow :!Cleft_arrow]
+                [:##right_arrow :!Cright_arrow]
+            ]
+        }
+
+        {
+            :des "s-mode"
+            :rules [
+                :s-mode
+                [:##escape :!Oescape]
+                [:##grave_accent_and_tilde :!Ograve_accent_and_tilde]
+                [:##1 :!O1]
+                [:##2 :!O2]
+                [:##3 :!O3]
+                [:##4 :!O4]
+                [:##5 :!O5]
+                [:##6 :!O6]
+                [:##7 :!O7]
+                [:##8 :!O8]
+                [:##9 :!O9]
+                [:##0 :!O0]
+                [:##hyphen :!Ohyphen]
+                [:##equal_sign :!Oequal_sign]
+                [:##delete_or_backspace :!Odelete_or_backspace]
+                [:##tab :!Otab]
+                [:##q :!Oq]
+                [:##w :!Ow]
+                [:##e :!Oe]
+                [:##r :!Or]
+                [:##t :!Ot]
+                [:##y :!Oy]
+                [:##u :!Ou]
+                [:##i :!Oi]
+                [:##o :!Oo]
+                [:##p :!Op]
+                [:##open_bracket :!Oopen_bracket]
+                [:##close_bracket :!Oclose_bracket]
+                [:##backslash :!Obackslash]
+                [:##a :!Oleft_command]
+                [:##d :!Oleft_control]
+                [:##f :!Oleft_shift]
+                [:##g :!Og]
+                [:##h :!Oh]
+                [:##j :!Oj]
+                [:##k :!Ok]
+                [:##l :!Ol]
+                [:##semicolon :!Osemicolon]
+                [:##quote :!Oquote]
+                [:##return_or_enter :!Oreturn_or_enter]
+                [:##z :!Oz]
+                [:##x :!Ox]
+                [:##c :!Oc]
+                [:##v :!Ov]
+                [:##b :!Ob]
+                [:##n :!On]
+                [:##m :!Om]
+                [:##comma :!Ocomma]
+                [:##period :!Operiod]
+                [:##slash :!Oslash]
+                [:##spacebar :!Ospacebar]
+                [:##up_arrow :!Oup_arrow]
+                [:##down_arrow :!Odown_arrow]
+                [:##left_arrow :!Oleft_arrow]
+                [:##right_arrow :!Oright_arrow]
+            ]
+        }
+
+        {
+            :des "d-mode"
+            :rules [
+                :d-mode
+                [:##escape :!Tescape]
+                [:##grave_accent_and_tilde :!Tgrave_accent_and_tilde]
+                [:##1 :!T1]
+                [:##2 :!T2]
+                [:##3 :!T3]
+                [:##4 :!T4]
+                [:##5 :!T5]
+                [:##6 :!T6]
+                [:##7 :!T7]
+                [:##8 :!T8]
+                [:##9 :!T9]
+                [:##0 :!T0]
+                [:##hyphen :!Thyphen]
+                [:##equal_sign :!Tequal_sign]
+                [:##delete_or_backspace :!Tdelete_or_backspace]
+                [:##tab :!Ttab]
+                [:##q :!Tq]
+                [:##w :!Tw]
+                [:##e :!Te]
+                [:##r :!Tr]
+                [:##t :!Tt]
+                [:##y :!Ty]
+                [:##u :!Tu]
+                [:##i :!Ti]
+                [:##o :!To]
+                [:##p :!Tp]
+                [:##open_bracket :!Topen_bracket]
+                [:##close_bracket :!Tclose_bracket]
+                [:##backslash :!Tbackslash]
+                [:##a :!Tleft_command]
+                [:##s :!Tleft_option]
+                [:##f :!Tleft_shift]
+                [:##g :!Tg]
+                [:##h :!Th]
+                [:##j :!Tj]
+                [:##k :!Tk]
+                [:##l :!Tl]
+                [:##semicolon :!Tsemicolon]
+                [:##quote :!Tquote]
+                [:##return_or_enter :!Treturn_or_enter]
+                [:##z :!Tz]
+                [:##x :!Tx]
+                [:##c :!Tc]
+                [:##v :!Tv]
+                [:##b :!Tb]
+                [:##n :!Tn]
+                [:##m :!Tm]
+                [:##comma :!Tcomma]
+                [:##period :!Tperiod]
+                [:##slash :!Tslash]
+                [:##spacebar :!Tspacebar]
+                [:##up_arrow :!Tup_arrow]
+                [:##down_arrow :!Tdown_arrow]
+                [:##left_arrow :!Tleft_arrow]
+                [:##right_arrow :!Tright_arrow]
+            ]
+        }
+
+        {
+            :des "f-mode"
+            :rules [
+                :f-mode
+                [:##escape :!Sescape]
+                [:##grave_accent_and_tilde :!Sgrave_accent_and_tilde]
+                [:##1 :!S1]
+                [:##2 :!S2]
+                [:##3 :!S3]
+                [:##4 :!S4]
+                [:##5 :!S5]
+                [:##6 :!S6]
+                [:##7 :!S7]
+                [:##8 :!S8]
+                [:##9 :!S9]
+                [:##0 :!S0]
+                [:##hyphen :!Shyphen]
+                [:##equal_sign :!Sequal_sign]
+                [:##delete_or_backspace :!Sdelete_or_backspace]
+                [:##tab :!Stab]
+                [:##q :!Sq]
+                [:##w :!Sw]
+                [:##e :!Se]
+                [:##r :!Sr]
+                [:##t :!St]
+                [:##y :!Sy]
+                [:##u :!Su]
+                [:##i :!Si]
+                [:##o :!So]
+                [:##p :!Sp]
+                [:##open_bracket :!Sopen_bracket]
+                [:##close_bracket :!Sclose_bracket]
+                [:##backslash :!Sbackslash]
+                [:##a :!Sleft_command]
+                [:##s :!Sleft_option]
+                [:##d :!Sleft_control]
+                [:##g :!Sg]
+                [:##h :!Sh]
+                [:##j :!Sj]
+                [:##k :!Sk]
+                [:##l :!Sl]
+                [:##semicolon :!Ssemicolon]
+                [:##quote :!Squote]
+                [:##return_or_enter :!Sreturn_or_enter]
+                [:##z :!Sz]
+                [:##x :!Sx]
+                [:##c :!Sc]
+                [:##v :!Sv]
+                [:##b :!Sb]
+                [:##n :!Sn]
+                [:##m :!Sm]
+                [:##comma :!Scomma]
+                [:##period :!Speriod]
+                [:##slash :!Sslash]
+                [:##spacebar :!Sspacebar]
+                [:##up_arrow :!Sup_arrow]
+                [:##down_arrow :!Sdown_arrow]
+                [:##left_arrow :!Sleft_arrow]
+                [:##right_arrow :!Sright_arrow]
+            ]
+        }
+
+        {
+            :des "j-mode"
+            :rules [
+                :j-mode
+                [:##escape :!Rescape]
+                [:##grave_accent_and_tilde :!Rgrave_accent_and_tilde]
+                [:##1 :!R1]
+                [:##2 :!R2]
+                [:##3 :!R3]
+                [:##4 :!R4]
+                [:##5 :!R5]
+                [:##6 :!R6]
+                [:##7 :!R7]
+                [:##8 :!R8]
+                [:##9 :!R9]
+                [:##0 :!R0]
+                [:##hyphen :!Rhyphen]
+                [:##equal_sign :!Requal_sign]
+                [:##delete_or_backspace :!Rdelete_or_backspace]
+                [:##tab :!Rtab]
+                [:##q :!Rq]
+                [:##w :!Rw]
+                [:##e :!Re]
+                [:##r :!Rr]
+                [:##t :!Rt]
+                [:##y :!Ry]
+                [:##u :!Ru]
+                [:##i :!Ri]
+                [:##o :!Ro]
+                [:##p :!Rp]
+                [:##open_bracket :!Ropen_bracket]
+                [:##close_bracket :!Rclose_bracket]
+                [:##backslash :!Rbackslash]
+                [:##a :!Ra]
+                [:##s :!Rs]
+                [:##d :!Rd]
+                [:##f :!Rf]
+                [:##g :!Rg]
+                [:##h :!Rh]
+                [:##k :!Rright_control]
+                [:##l :!Rright_option]
+                [:##semicolon :!Rright_command]
+                [:##quote :!Rquote]
+                [:##return_or_enter :!Rreturn_or_enter]
+                [:##z :!Rz]
+                [:##x :!Rx]
+                [:##c :!Rc]
+                [:##v :!Rv]
+                [:##b :!Rb]
+                [:##n :!Rn]
+                [:##m :!Rm]
+                [:##comma :!Rcomma]
+                [:##period :!Rperiod]
+                [:##slash :!Rslash]
+                [:##spacebar :!Rspacebar]
+                [:##up_arrow :!Rup_arrow]
+                [:##down_arrow :!Rdown_arrow]
+                [:##left_arrow :!Rleft_arrow]
+                [:##right_arrow :!Rright_arrow]
+            ]
+        }
+
+        {
+            :des "k-mode"
+            :rules [
+                :k-mode
+                [:##escape :!Wescape]
+                [:##grave_accent_and_tilde :!Wgrave_accent_and_tilde]
+                [:##1 :!W1]
+                [:##2 :!W2]
+                [:##3 :!W3]
+                [:##4 :!W4]
+                [:##5 :!W5]
+                [:##6 :!W6]
+                [:##7 :!W7]
+                [:##8 :!W8]
+                [:##9 :!W9]
+                [:##0 :!W0]
+                [:##hyphen :!Whyphen]
+                [:##equal_sign :!Wequal_sign]
+                [:##delete_or_backspace :!Wdelete_or_backspace]
+                [:##tab :!Wtab]
+                [:##q :!Wq]
+                [:##w :!Ww]
+                [:##e :!We]
+                [:##r :!Wr]
+                [:##t :!Wt]
+                [:##y :!Wy]
+                [:##u :!Wu]
+                [:##i :!Wi]
+                [:##o :!Wo]
+                [:##p :!Wp]
+                [:##open_bracket :!Wopen_bracket]
+                [:##close_bracket :!Wclose_bracket]
+                [:##backslash :!Wbackslash]
+                [:##a :!Wa]
+                [:##s :!Ws]
+                [:##d :!Wd]
+                [:##f :!Wf]
+                [:##g :!Wg]
+                [:##h :!Wh]
+                [:##j :!Wright_shift]
+                [:##l :!Wright_option]
+                [:##semicolon :!Wright_command]
+                [:##quote :!Wquote]
+                [:##return_or_enter :!Wreturn_or_enter]
+                [:##z :!Wz]
+                [:##x :!Wx]
+                [:##c :!Wc]
+                [:##v :!Wv]
+                [:##b :!Wb]
+                [:##n :!Wn]
+                [:##m :!Wm]
+                [:##comma :!Wcomma]
+                [:##period :!Wperiod]
+                [:##slash :!Wslash]
+                [:##spacebar :!Wspacebar]
+                [:##up_arrow :!Wup_arrow]
+                [:##down_arrow :!Wdown_arrow]
+                [:##left_arrow :!Wleft_arrow]
+                [:##right_arrow :!Wright_arrow]
+            ]
+        }
+
+        {
+            :des "l-mode"
+            :rules [
+                :l-mode
+                [:##escape :!Eescape]
+                [:##grave_accent_and_tilde :!Egrave_accent_and_tilde]
+                [:##1 :!E1]
+                [:##2 :!E2]
+                [:##3 :!E3]
+                [:##4 :!E4]
+                [:##5 :!E5]
+                [:##6 :!E6]
+                [:##7 :!E7]
+                [:##8 :!E8]
+                [:##9 :!E9]
+                [:##0 :!E0]
+                [:##hyphen :!Ehyphen]
+                [:##equal_sign :!Eequal_sign]
+                [:##delete_or_backspace :!Edelete_or_backspace]
+                [:##tab :!Etab]
+                [:##q :!Eq]
+                [:##w :!Ew]
+                [:##e :!Ee]
+                [:##r :!Er]
+                [:##t :!Et]
+                [:##y :!Ey]
+                [:##u :!Eu]
+                [:##i :!Ei]
+                [:##o :!Eo]
+                [:##p :!Ep]
+                [:##open_bracket :!Eopen_bracket]
+                [:##close_bracket :!Eclose_bracket]
+                [:##backslash :!Ebackslash]
+                [:##a :!Ea]
+                [:##s :!Es]
+                [:##d :!Ed]
+                [:##f :!Ef]
+                [:##g :!Eg]
+                [:##h :!Eh]
+                [:##j :!Eright_shift]
+                [:##k :!Eright_control]
+                [:##semicolon :!Eright_command]
+                [:##quote :!Equote]
+                [:##return_or_enter :!Ereturn_or_enter]
+                [:##z :!Ez]
+                [:##x :!Ex]
+                [:##c :!Ec]
+                [:##v :!Ev]
+                [:##b :!Eb]
+                [:##n :!En]
+                [:##m :!Em]
+                [:##comma :!Ecomma]
+                [:##period :!Eperiod]
+                [:##slash :!Eslash]
+                [:##spacebar :!Espacebar]
+                [:##up_arrow :!Eup_arrow]
+                [:##down_arrow :!Edown_arrow]
+                [:##left_arrow :!Eleft_arrow]
+                [:##right_arrow :!Eright_arrow]
+            ]
+        }
+
+        {
+            :des "sc-mode"
+            :rules [
+                :sc-mode
+                [:##escape :!Qescape]
+                [:##grave_accent_and_tilde :!Qgrave_accent_and_tilde]
+                [:##1 :!Q1]
+                [:##2 :!Q2]
+                [:##3 :!Q3]
+                [:##4 :!Q4]
+                [:##5 :!Q5]
+                [:##6 :!Q6]
+                [:##7 :!Q7]
+                [:##8 :!Q8]
+                [:##9 :!Q9]
+                [:##0 :!Q0]
+                [:##hyphen :!Qhyphen]
+                [:##equal_sign :!Qequal_sign]
+                [:##delete_or_backspace :!Qdelete_or_backspace]
+                [:##tab :!Qtab]
+                [:##q :!Qq]
+                [:##w :!Qw]
+                [:##e :!Qe]
+                [:##r :!Qr]
+                [:##t :!Qt]
+                [:##y :!Qy]
+                [:##u :!Qu]
+                [:##i :!Qi]
+                [:##o :!Qo]
+                [:##p :!Qp]
+                [:##open_bracket :!Qopen_bracket]
+                [:##close_bracket :!Qclose_bracket]
+                [:##backslash :!Qbackslash]
+                [:##a :!Qa]
+                [:##s :!Qs]
+                [:##d :!Qd]
+                [:##f :!Qf]
+                [:##g :!Qg]
+                [:##h :!Qh]
+                [:##j :!Qright_shift]
+                [:##k :!Qright_control]
+                [:##l :!Qright_option]
+                [:##quote :!Qquote]
+                [:##return_or_enter :!Qreturn_or_enter]
+                [:##z :!Qz]
+                [:##x :!Qx]
+                [:##c :!Qc]
+                [:##v :!Qv]
+                [:##b :!Qb]
+                [:##n :!Qn]
+                [:##m :!Qm]
+                [:##comma :!Qcomma]
+                [:##period :!Qperiod]
+                [:##slash :!Qslash]
+                [:##spacebar :!Qspacebar]
+                [:##up_arrow :!Qup_arrow]
+                [:##down_arrow :!Qdown_arrow]
+                [:##left_arrow :!Qleft_arrow]
+                [:##right_arrow :!Qright_arrow]
+            ]
+        }
+    ]
+}

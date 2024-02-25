@@ -1,6 +1,6 @@
 (defcfg
-  input (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
-  output (uinput-sink "my kmonad output")
+  input (iokit-name "Apple Internal Keyboard / Trackpad")
+  output (kext)
   fallthrough true
   allow-cmd false
 )
@@ -10,7 +10,7 @@
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl lmet lalt           spc            ralt comp rctl
+  lctl lalt lmet           spc            rmet ralt
 )
 
 (defalias
@@ -46,7 +46,7 @@
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   esc  @lm  @la  @lc  @ls  g    h    @rs  @rc  @ra  @rm  '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl lmet lalt           @nav           ralt comp rctl
+  lctl lalt lmet           @nav           rmet ralt
 )
 
 (deflayer nav
@@ -54,7 +54,7 @@
   XX   XX   XX   XX   XX   XX   XX   home up   end  XX   XX   XX   XX
   XX   lmet lalt lctl lsft XX   XX   left down rght XX   XX   XX
   XX   XX   XX   XX   XX   XX   XX   pgup pgdn XX   XX   XX
-  XX   XX   XX             XX             XX   XX   XX
+  XX   XX   XX             XX             XX   XX
 )
 
 (deflayer normal-a
@@ -62,7 +62,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    a    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-s
@@ -70,7 +70,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    s    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-d
@@ -78,7 +78,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    d    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-f
@@ -86,7 +86,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    f    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-j
@@ -94,7 +94,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    j    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-k
@@ -102,7 +102,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    k    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-l
@@ -110,7 +110,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    l    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-semicolon
@@ -118,7 +118,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    ;    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _
+  _    _    _              _              _    _
 )
 
 (deflayer normal-space
@@ -126,5 +126,5 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              spc            _    _    _
+  _    _    _              spc            _    _
 )

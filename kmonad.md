@@ -1,5 +1,41 @@
 # kmonad
 
+## Dual-function keys with transiet layers for autorepeat
+
+Assigning a tap-hold button to a key necessarily comes with the loss of that
+key's usual autorepeat functionality. One workaround is to have the key
+temporarily behave normally after each tap such that a top quickly followed by a
+hold triggers autorepeat. This can be implemented by having the tapped key
+toggle into a temporary layer in which the key is just its normal self. This
+layer is active for only a brief period of time before the main layer becomes
+active again and the key is back to being a tap-hold button.
+
+Here's a minimal example:
+
+```
+(defsrc q w e r t y) ;; etc.
+
+(defalias
+  ;; A button that both emits "q" and activates the "normal-q" layer,
+  ;; automatically switching back to the "main" layer after 150 ms:
+  tapped-q (around q (layer-delay 150 normal-q))
+
+  ;; Define a tap-hold, but instead of "q" as the key to emit when tapped, use
+  ;; the "tapped-q" button:
+  qsft (tap-hold-next-release 200 @tapped-q lsft)
+)
+
+;; The "q" key is a tap-hold button in the main layer:
+(deflayer main @qsft w e r t y)
+
+;; Here the "q" key is its normal self and will autorepeat if held long enough:
+(deflayer normal-q q _ _ _ _ _)
+```
+
+The `layer-delay` timeout parameter should be tuned to taste, typically on the
+low side.
+
+
 ## Homerow modifiers with a navigation layer
 
 Implementations:

@@ -14,11 +14,6 @@
 )
 
 (defalias
-  ;; These buttons both emit the key and switch into a special layer in which
-  ;; the key is just its normal self. The special layer is only active for a
-  ;; brief period of time before and the main layer becomes active again. This
-  ;; is useful for dual-function keys because autorepeat can be triggered with a
-  ;; tap quickly followed by a hold.
   tapped-a (around a (layer-delay 150 normal-a))
   tapped-s (around s (layer-delay 150 normal-s))
   tapped-d (around d (layer-delay 150 normal-d))
@@ -29,7 +24,6 @@
   tapped-semicolon (around ; (layer-delay 150 normal-semicolon))
   tapped-space (around spc (layer-delay 150 normal-space))
 
-  ;; Dual-function keys with transient layers for autorepeat:
   lm (tap-hold-next-release 200 @tapped-a lmet)
   la (tap-hold-next-release 200 @tapped-s lalt)
   lc (tap-hold-next-release 200 @tapped-d lctl)

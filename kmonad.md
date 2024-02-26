@@ -1,5 +1,14 @@
 # kmonad
 
+## Function keys on Mac
+
+kmonad messes with function keys on macs. See [How to use the special features
+printed on Apple function
+keys?](https://github.com/kmonad/kmonad/blob/master/keymap/template/apple.kbd)
+in the kmonad FAQ. Fortunately, the proposed solution of configuring a function
+layer does work.
+
+
 ## Dual-function keys with transiet layers for autorepeat
 
 Assigning a tap-hold button to a key necessarily comes with the loss of that

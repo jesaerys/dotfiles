@@ -16,6 +16,8 @@
 
 (defalias
   fn (around (layer-toggle function) fn)
+  hom (around lmet left)
+  end (around lmet rght)
   tapped-a (around a (layer-delay 150 normal-a))
   tapped-s (around s (layer-delay 150 normal-s))
   tapped-d (around d (layer-delay 150 normal-d))
@@ -26,14 +28,14 @@
   tapped-semicolon (around ; (layer-delay 150 normal-semicolon))
   tapped-space (around spc (layer-delay 150 normal-space))
 
-  lm (tap-hold-next-release 200 @tapped-a lmet)
+  lc (tap-hold-next-release 200 @tapped-a lctl)
   la (tap-hold-next-release 200 @tapped-s lalt)
-  lc (tap-hold-next-release 200 @tapped-d lctl)
+  lm (tap-hold-next-release 200 @tapped-d lmet)
   ls (tap-hold-next-release 200 @tapped-f lsft)
   rs (tap-hold-next-release 200 @tapped-j rsft)
-  rc (tap-hold-next-release 200 @tapped-k rctl)
+  rm (tap-hold-next-release 200 @tapped-k rmet)
   ra (tap-hold-next-release 200 @tapped-l ralt)
-  rm (tap-hold-next-release 200 @tapped-semicolon rmet)
+  rc (tap-hold-next-release 200 @tapped-semicolon rctl)
   nav (tap-hold-next-release 200 @tapped-space (layer-toggle nav))
 )
 
@@ -41,7 +43,7 @@
   _    brdn brup lp   mctl bldn blup prev pp   next mute vold volu
   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  esc  @lm  @la  @lc  @ls  g    h    @rs  @rc  @ra  @rm  '    ret
+  esc  @lc  @la  @lm  @ls  g    h    @rs  @rm  @ra  @rc  '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft up
   @fn  lctl lalt lmet           @nav           rmet ralt left down rght
 )
@@ -58,8 +60,8 @@
 (deflayer nav
   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   del
-  XX   XX   XX   XX   XX   XX   XX   home up   end  XX   XX   XX   XX
-  XX   lmet lalt lctl lsft XX   XX   left down rght XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   @hom up   @end XX   XX   XX   XX
+  XX   lctl lalt lmet lsft XX   XX   left down rght XX   XX   XX
   _    XX   XX   XX   XX   XX   XX   pgup pgdn XX   XX   _    XX
   _    _    _    _              XX             _    _    XX   XX   XX
 )

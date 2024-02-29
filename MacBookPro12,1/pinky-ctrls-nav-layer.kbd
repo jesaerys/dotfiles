@@ -16,6 +16,8 @@
 
 (defalias
   fn (around (layer-toggle function) fn)
+  hom (around lmet left)
+  end (around lmet rght)
   tapped-space (around spc (layer-delay 150 normal-space))
   nav (tap-hold-next-release 200 @tapped-space (layer-toggle nav))
   lc (tap-hold-next-release 200 esc lctl)
@@ -43,7 +45,7 @@
 (deflayer nav
   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   del
-  XX   XX   XX   XX   XX   XX   XX   home up   end  XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   @hom up   @end XX   XX   XX   XX
   lctl XX   XX   XX   XX   XX   XX   left down rght XX   XX   rctl
   _    XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   _    XX
   _    _    _    _              XX             _    _    XX   XX   XX

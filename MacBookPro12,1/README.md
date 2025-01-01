@@ -4,7 +4,6 @@
 whatever is in `archive/shell-script/misc/setup-notes.md` and
 `archive/shell-script/README.md`.)
 
-
 ## zsh
 
 Using zsh because it's the default on macos. `.zshrc` isn't fancy, it's
@@ -25,9 +24,19 @@ export PS1='%B%F{blue}%1~ $ %f%b'
 export PATH="$PATH:$HOME/.local/bin"
 ```
 
-
 ## kmonad
 
 Installed ghcup and stack in order to install kmonad,
 then installed kmonad (worked as documented).
 Seems to work great.
+
+## QLMarkdown
+
+Installed QLMarkdown to preview markdown files with QuickLook
+(<https://github.com/sbarex/QLMarkdown>).
+
+```
+brew install --cask qlmarkdown
+```
+
+(Apparently I have homebrew.)

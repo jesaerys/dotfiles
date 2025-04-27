@@ -8,8 +8,7 @@ keys?](https://github.com/kmonad/kmonad/blob/master/keymap/template/apple.kbd)
 in the kmonad FAQ. Fortunately, the proposed solution of configuring a function
 layer does work.
 
-
-## Dual-function keys with transiet layers for autorepeat
+## Dual-function keys with transient layers for autorepeat
 
 Assigning a tap-hold button to a key necessarily comes with the loss of that
 key's usual autorepeat functionality. One workaround is to have the key
@@ -21,7 +20,7 @@ active again and the key is back to being a tap-hold button.
 
 Here's a minimal example:
 
-```
+```kmonad
 (defsrc q w e r t y) ;; etc.
 
 (defalias
@@ -44,10 +43,10 @@ Here's a minimal example:
 The `layer-delay` timeout parameter should be tuned to taste, typically on the
 low side.
 
-
 ## Homerow modifiers with a navigation layer
 
 Implementations:
+
 * [MacBookPro12,1](MacBookPro12,1/homerow-mods.kbd)
 * [Oryx Pro (oryp10)](archive/pop-os/homerow-mods.kbd)
 
@@ -57,7 +56,7 @@ in QMK/Oryx with "permissive hold" enabled. This layout retains *almost* all of
 the functionality of a regular keyboard; the only major difference is autorepeat
 on dual-function keys requires a tap-hold instead of a normal hold.
 
-```
+```text
 .-------.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.-----.
 |       |     |     |     |     |     |     | home|  up | end |     |     |     |     |
 |  tab  |  q  |  w  |  e  |  r  |  t  |  y  |  u  |  i  |  o  |  p  |  [  |  ]  |  \  |
@@ -92,7 +91,8 @@ feature to kick in.
 **Caveats:** the following three-key combos do *not* work:
 
 MacBookPro12,1:
-```
+
+```text
 Left hand mods:           Right hand mods:
 a f ] (cmd+shift+])       j ; a (cmd+shift+a)
 s f ] (opt+shift+])       j ; s (cmd+shift+s)
@@ -102,7 +102,8 @@ d f ] (ctrl+shift+])      j ; d (cmd+shift+d)
 ```
 
 Oryx Pro (oryp10):
-```
+
+```text
 Left hand mods:           Right hand mods:
 a d 7 (super+ctrl+7)      k l r (ctrl+alt+r)
 a d / (super+ctrl+/)      k ; ` (super+ctrl+`)

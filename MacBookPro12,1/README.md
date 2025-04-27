@@ -35,7 +35,7 @@ Seems to work great.
 Installed QLMarkdown to preview markdown files with QuickLook
 (<https://github.com/sbarex/QLMarkdown>).
 
-```
+```sh
 brew install --cask qlmarkdown
 ```
 

@@ -56,6 +56,8 @@
 pkgs.writeShellApplication {
   name = "git-clone-as";
   runtimeInputs = [ pkgs.git ];
+  # TODO: this should also have a --fix option that skips cloning and just
+  # updates the config of an existing repo.
   text = ''
     usage () {
       cat <<'EOF'
